@@ -1,0 +1,72 @@
+//------------------------------------------------
+//--- 010 Editor v8.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct MEPackageGeneration {
+	int ExportCount;
+	int NameCount;
+	int NetObjectCount;
+};
+
+struct MECompressedChunkInfo {
+
+	int UncompressedOffset <format=hex>;
+	int UncompressedSize;
+	int CompressedOffset <format=hex>;
+	int CompressedSize;
+};
+
+struct FEngineVersion {
+    uint16 InMajor;
+    uint16 InMinor;
+    //uint16 InPatch;
+    //uint32 InChangelist;
+};
+
+struct Header {
+    int magic <format=hex>;
+    short packageVersion;
+    short licenceVersion;
+	int		HeaderSize;
+    int FolderNameSize;
+	char	FolderName[FolderNameSize];
+	int		PackageFlags <format=hex>;
+	int		NameCount;
+	int		NameOffset <format=hex>;
+	int		ExportCount;
+	int		ExportOffset <format=hex>;
+	int		ImportCount;
+	int		ImportOffset <format=hex>;
+	int		DependsOffset <format=hex>;
+
+	int		GUID[4];
+    int GenerationsCount;
+	MEPackageGeneration Generations[GenerationsCount];
+    FEngineVersion EngineVersion;
+    FEngineVersion CookerVersion;
+
+    int stuff[7] <format=hex>;
+	//int		EngineVersion;
+	//int		CookerVersion;
+    
+	int	CompressionFlags <format=hex>;
+    int ChunkInfoCount;
+	MECompressedChunkInfo ChunkInfo[ChunkInfoCount];
+    int stuff3[2] <format=hex>;
+
+};
+
+struct Package {
+    Header header;
+};
+
+Package package;
