@@ -185,6 +185,6 @@ public:
 
 public:
 	virtual std::string DebugInfo() const override;
-	virtual void DumpByteInfo() const override;
+	virtual std::string DumpByteInfo() const override;
 };
 

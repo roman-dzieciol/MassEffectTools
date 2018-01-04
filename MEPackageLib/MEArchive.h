@@ -14,7 +14,7 @@ enum EByteInfo
 	BI_Object = 0x20,
 };
 
-inline std::string upGetByteInfoName(EByteInfo info)
+inline const char* upGetByteInfoName(EByteInfo info)
 {
 	switch (info)
 	{
@@ -85,7 +85,7 @@ public:
 
 public:
 	virtual std::string		DebugInfo() const = 0;
-	virtual void			DumpByteInfo() const = 0;
+	virtual std::string		DumpByteInfo() const = 0;
 
 public:
 	friend MEArchive& operator << (MEArchive& A, qword& D) { A.Serialize(&D, sizeof(qword)); return A; /*wxUINT64_SWAP_ON_?E(D);*/ }
@@ -95,12 +95,9 @@ public:
 	friend MEArchive& operator << (MEArchive& A, int64& D) { A.Serialize(&D, sizeof(int64)); return A; /*wxINT64_SWAP_ON_?E(D);*/ }
 	friend MEArchive& operator << (MEArchive& A, int32& D) { A.Serialize(&D, sizeof(int32)); return A;/*wxINT32_SWAP_ON_?E(D);*/ }
 	friend MEArchive& operator << (MEArchive& A, int16& D) { A.Serialize(&D, sizeof(int16)); return A; /*wxINT16_SWAP_ON_?E(D);*/ }
-	friend MEArchive& operator << (MEArchive& A, int8& D) { A.Serialize(&D, sizeof(int8)); return A;
-	}
-	friend MEArchive& operator << (MEArchive& A, char& D) { A.Serialize(&D, sizeof(char)); return A;
-	}
-	friend MEArchive& operator << (MEArchive& A, wchar_t& D) { A.Serialize(&D, sizeof(wchar_t)); return A;
-	}
+	friend MEArchive& operator << (MEArchive& A, int8& D) { A.Serialize(&D, sizeof(int8)); return A;}
+	friend MEArchive& operator << (MEArchive& A, char& D) { A.Serialize(&D, sizeof(char)); return A;}
+	friend MEArchive& operator << (MEArchive& A, wchar_t& D) { A.Serialize(&D, sizeof(wchar_t)); return A;}
 	friend MEArchive& operator << (MEArchive& A, float& D) { A.Serialize(&D, sizeof(float)); return A; /*wxINT32_SWAP_ON_?E(D);*/ }
 
 public:

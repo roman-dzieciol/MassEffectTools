@@ -4,6 +4,7 @@
 #include "MECompression.h"
 #include <ios>
 #include <algorithm>
+#include <sstream>
 
 // ============================================================================
 //	MEFileBuffer
@@ -27,42 +28,46 @@ std::string MEFileArchive::DebugInfo() const
 	return "";
 }
 
-void MEFileArchive::DumpByteInfo() const
-{/*
- //wxLogMessage( wxT("ByteInfo:") );
+std::string MEFileArchive::DumpByteInfo() const
+{
+	//wxLogMessage( wxT("ByteInfo:") );
 
- //if( !Markers )
- //	return;
+	//if( !Markers )
+	//	return;
 
- if (Data.size() > 0)
- {
- int from = 0;
- EByteInfo lastinfo = static_cast<EByteInfo>(Markers[0]);
+	std::stringstream str;
 
- for (dword i = 0; i != Data.size(); ++i)
- {
- if (Markers[i] != lastinfo)
- {
- wxLogMessage(wxString::Format(wxT("<0x%.8x 0x%.8x> %s")
- , static_cast<dword>(from)
- , static_cast<dword>(i - 1)
- , PF_STR(upGetByteInfoName(lastinfo))
- ));
- lastinfo = static_cast<EByteInfo>(Markers[i]);
- from = i;
- }
- }
+	if (Data.size() > 0)
+	{
+		int from = 0;
+		EByteInfo lastinfo = static_cast<EByteInfo>(Markers[0]);
 
- wxLogMessage(wxString::Format(wxT("<0x%.8x 0x%.8x> %s")
- , static_cast<dword>(from)
- , static_cast<dword>(Data.size() - 1)
- , PF_STR(upGetByteInfoName(lastinfo))
- ));
- }
+		for (dword i = 0; i != Data.size(); ++i)
+		{
+			if (Markers[i] != lastinfo)
+			{
+				str << MEFormat("<0x%.8x 0x%.8x> %s\n"
+					, static_cast<int>(from)
+					, static_cast<int>(i - 1)
+					, upGetByteInfoName(lastinfo)
+				);
+				lastinfo = static_cast<EByteInfo>(Markers[i]);
+				from = i;
+			}
+		}
 
- wxLogMessage(wxString::Format(wxT("<0x%.8x> EOF")
- , static_cast<dword>(Size)
- ));*/
+		str << MEFormat("<0x%.8x 0x%.8x> %s\n"
+			, static_cast<int>(from)
+			, static_cast<int>(Data.size() - 1)
+			, upGetByteInfoName(lastinfo)
+		);
+	}
+
+	str << MEFormat("<0x%.8x> EOF\n"
+		, static_cast<dword>(Size)
+	);
+
+	return str.str();
 }
 
 /*

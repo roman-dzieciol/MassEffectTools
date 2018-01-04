@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MEPackageLoader.h"
-
+#include <iostream>
 
 MEPackageLoader::MEPackageLoader()
 {
@@ -32,6 +32,9 @@ void MEPackageLoader::Load(fs::path path)
 		uncompressed->Seek(0);
 		auto uncompressedPackage = MEPackage();
 		*uncompressed << uncompressedPackage;
+
+		auto byteInfo = uncompressed->DumpByteInfo();
+		std::cout << byteInfo << std::endl;
 		
 		//f.SetDecompressed(true);
 		//f << pkg;

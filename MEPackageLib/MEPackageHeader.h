@@ -45,7 +45,7 @@ public:
 
 	friend MEArchive& operator << (MEArchive& A, MEPackageHeader& D)
 	{
-		//UP_BYTE_MARKER(header, A, 0, BI_Header);
+		UP_BYTE_MARKER(header, A, A.Tell(), BI_Header);
 
 		A << D.Signature;
 		if (D.Signature != MEConst::signature) {
@@ -84,9 +84,7 @@ public:
 		A << D.Unknown6;
 		A << D.Unknown7;
 		A << D.CompressionFlags;
-		if (D.CompressionFlags != static_cast<dword>(MECompressionFlags::None)) {
-			A << D.ChunkInfo;
-		}
+		A << D.ChunkInfo;
 		A << D.Unknown8;
 		A << D.Unknown9;
 		return A;

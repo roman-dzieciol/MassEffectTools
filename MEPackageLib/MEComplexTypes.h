@@ -134,6 +134,7 @@ public:
 
 	friend MEArchive& operator << (MEArchive& A, MENameTable& D)
 	{
+		UP_BYTE_MARKER(MEImportTable, A, A.Tell(), BI_NameTable);
 		for (auto& item : D.Items) {
 			A << item;
 		}
@@ -189,6 +190,7 @@ public:
 
 	friend MEArchive& operator << (MEArchive& A, MEImportTable& D)
 	{
+		UP_BYTE_MARKER(MEImportTable, A, A.Tell(), BI_ImportTable);
 		for (auto& item : D.Items) {
 			A << item;
 		}
@@ -241,6 +243,7 @@ public:
 
 	friend MEArchive& operator << (MEArchive& A, MEExportTable& D)
 	{
+		UP_BYTE_MARKER(MEExportTable, A, A.Tell(), BI_ExportTable);
 		for (auto& item : D.Items) {
 			A << item;
 		}
