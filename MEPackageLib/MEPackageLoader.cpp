@@ -12,21 +12,26 @@ MEPackageLoader::~MEPackageLoader()
 }
 
 
-void MEPackageLoader::Load(fs::path path) {
-
+void MEPackageLoader::Load(fs::path path) 
+{
 	MEFileArchive f;
-	f.ReadPath(fs::path("C:\\_MECoop\\Core.u"));
+	f.ReadPath(path);
 	auto pkg = MEPackage();
 	f << pkg;
 
 	if (pkg.Header.CompressionFlags != (dword)MECompressionFlags::None && !f.IsDecompressed()) {
 		//f.Decompress(pkg.Header.ChunkInfo.Array(), static_cast<MECompressionFlags>(pkg.Header.CompressionFlags));
 		auto uncompressed = UncompressPackage(pkg, f);
+		uncompressed->Seek(0);
+
+		auto inflatedPath = path;
+		inflatedPath.replace_extension(".inflated");
+		auto inflatedStream = std::fstream(inflatedPath.string(), std::ios::binary | std::ios::out | std::ios::trunc);
+		inflatedStream.write((const char*)uncompressed->GetDataPtr(), uncompressed->Length());
+
+		uncompressed->Seek(0);
 		auto uncompressedPackage = MEPackage();
-		uncompressedPackage.Header = pkg.Header;
-		uncompressedPackage.Header.CompressionFlags = 0;
-		uncompressedPackage.Header.ChunkInfo.Array().clear();
-		uncompressedPackage.SerializeContents(*uncompressed);
+		*uncompressed << uncompressedPackage;
 		
 		//f.SetDecompressed(true);
 		//f << pkg;
@@ -79,8 +84,14 @@ std::unique_ptr<MEFileArchive> MEPackageLoader::UncompressPackage(MEPackage& Pac
 
 	compressed.Seek(0);
 	uncompressed.Seek(0);
-	//compressed.Serialize(uncompressed.GetDataPtr(), chunks.front().CompressedOffset);
+	compressed.Serialize(uncompressed.GetDataPtr(), chunks.front().UncompressedOffset);
 
+	uncompressed.Seek(chunks.front().UncompressedOffset - sizeof(dword) * 4);
+	memset(uncompressed.GetDataPtr(), 0, sizeof(dword) * 2);
+
+	compressed.Seek(chunks.front().CompressedOffset - sizeof(dword) * 2);
+	uncompressed.Seek(chunks.front().UncompressedOffset - sizeof(dword) * 2);
+	compressed.Serialize(uncompressed.GetDataPtr(), sizeof(dword) * 2);
 
 	for (auto& chunkInfo : Package.Header.ChunkInfo.Array()) {
 		uncompressed.Seek(chunkInfo.UncompressedOffset);

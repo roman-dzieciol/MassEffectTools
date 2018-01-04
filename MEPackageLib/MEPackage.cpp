@@ -22,9 +22,19 @@ void MEPackage::SerializeContents(MEArchive& A) {
 	NameTable.Items.reserve(Header.NameCount);
 	NameTable.Items.resize(Header.NameCount);
 	A << NameTable;
+
+	A.Seek(Header.ImportOffset);
+	ImportTable.Items.reserve(Header.ImportCount);
+	ImportTable.Items.resize(Header.ImportCount);
+	A << ImportTable;
+
+	A.Seek(Header.ExportOffset);
+	ExportTable.Items.reserve(Header.ExportCount);
+	ExportTable.Items.resize(Header.ExportCount);
+	A << ExportTable;
 }
 
-void operator << (MEArchive& A, MEPackage& D) {
+MEArchive& operator << (MEArchive& A, MEPackage& D) {
 	D.SerializeHeader(A);
 	if (D.Header.CompressionFlags == (dword)MECompressionFlags::None) {
 		A.SetDecompressed(true);
@@ -32,12 +42,13 @@ void operator << (MEArchive& A, MEPackage& D) {
 
 	if (D.Header.CompressionFlags != (dword)MECompressionFlags::None) {
 		if (!A.IsDecompressed()) {
-			return;
+			return A;
 		}
 
 	}
 
 	D.SerializeContents(A);
+	return A;
 }
 
 

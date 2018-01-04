@@ -16,12 +16,13 @@ public:
 			UncompressedOffset, UncompressedSize, CompressedOffset, CompressedSize);
 	}
 
-	friend void operator << (MEArchive& A, MECompressedChunkInfo& D)
+	friend MEArchive& operator << (MEArchive& A, MECompressedChunkInfo& D)
 	{
 		A << D.UncompressedOffset;
 		A << D.UncompressedSize;
 		A << D.CompressedOffset;
 		A << D.CompressedSize;
+		return A;
 	}
 };
 
@@ -31,10 +32,11 @@ struct FCompressedChunkBlock
 	dword CompressedSize;
 	dword UncompressedSize;
 
-	friend void operator << (MEArchive& A, FCompressedChunkBlock& D)
+	friend MEArchive& operator << (MEArchive& A, FCompressedChunkBlock& D)
 	{
 		A << D.CompressedSize;
 		A << D.UncompressedSize;
+		return A;
 	}
 };
 
@@ -45,7 +47,7 @@ struct FCompressedChunkHeader
 	FCompressedChunkBlock Summary;
 	std::vector<FCompressedChunkBlock> Blocks;
 
-	friend void operator << (MEArchive& A, FCompressedChunkHeader& D)
+	friend MEArchive& operator << (MEArchive& A, FCompressedChunkHeader& D)
 	{
 		A << D.Signature;
 		A << D.BlockSize;
@@ -57,6 +59,7 @@ struct FCompressedChunkHeader
 			A << block;
 			D.Blocks.push_back(block);
 		}
+		return A;
 	}
 };
 

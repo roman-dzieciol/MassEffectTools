@@ -13,14 +13,17 @@ public:
 	std::vector<FCompressedChunkHeader> ChunkHeaders;
 
 	MENameTable NameTable;
+	MEImportTable ImportTable;
+	MEExportTable ExportTable;
 
 	MEPackage();
 	~MEPackage();
 	
-	virtual void SerializeHeader(MEArchive& A);
-	virtual void SerializeContents(MEArchive& A);
 
-	friend void operator << (MEArchive& A, MEPackage& D);
+	void SerializeHeader(MEArchive& A);
+	void SerializeContents(MEArchive& A);
+
+	friend MEArchive& operator << (MEArchive& A, MEPackage& D);
 
 };
 

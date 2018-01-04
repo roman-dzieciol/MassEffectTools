@@ -80,8 +80,75 @@ struct Header {
 
 };
 
+
+
+struct FNameTableItem {
+    int NameSize;
+    char Name[NameSize];
+    uint64 flags <format=hex>;
+};
+
+struct FNameTable(int count) {
+    FNameTableItem Items[count] <optimize=false>;
+};
+
+struct NameIndex {
+    DWORD Index <format=hex>;
+    DWORD Number;
+};
+
+struct FImportTableItem {
+        NameIndex PackageName;
+		NameIndex ClassName;
+		DWORD OuterIndex;
+		NameIndex ObjectName;
+};
+
+
+struct FImportTable(int count) {
+    FImportTableItem Items[count] <optimize=false>;
+};
+
+struct ComponentPair {
+    NameIndex ComponentName;
+    DWORD ComponentObject;
+};
+
+struct FExportTableItem {
+    int ClassObject;
+    int SuperObject;
+    int OuterObject;
+	NameIndex ObjectName;
+    int ArchetypeObject;
+    QWORD ObjectFlags;
+    int SerialSize;
+    int SerialOffset;
+
+    int ComponentsCount;
+    ComponentPair Components[ComponentsCount];
+
+    int ExportFlags;
+
+    int NetObjectsCount;
+    int NetObjects[NetObjectsCount];
+
+    int PackageGUID[4];
+    int PackageFlags;
+};
+
+
+struct FExportTable(int count) {
+    FExportTableItem Items[count] <optimize=false>;
+};
+
 struct Package {
     Header header;
+FSeek(header.NameOffset);
+    FNameTable nameTable(header.NameCount);
+FSeek(header.ImportOffset);
+    FImportTable importTable(header.ImportCount);
+FSeek(header.ExportOffset);
+    //FExportTable exportTable(header.ExportCount);
 };
 
 Package package;

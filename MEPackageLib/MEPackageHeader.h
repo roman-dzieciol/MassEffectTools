@@ -43,7 +43,7 @@ public:
 	MEPackageHeader();
 	~MEPackageHeader();
 
-	friend void operator << (MEArchive& A, MEPackageHeader& D)
+	friend MEArchive& operator << (MEArchive& A, MEPackageHeader& D)
 	{
 		//UP_BYTE_MARKER(header, A, 0, BI_Header);
 
@@ -89,6 +89,7 @@ public:
 		}
 		A << D.Unknown8;
 		A << D.Unknown9;
+		return A;
 	}
 };
 

@@ -4,7 +4,7 @@
 // ============================================================================
 //  MEString
 // ============================================================================
-void operator << (MEArchive& A, MEString& D)
+MEArchive& operator << (MEArchive& A, MEString& D)
 {
 	dword length;
 	A << length;
@@ -24,41 +24,45 @@ void operator << (MEArchive& A, MEString& D)
 		wxWCharBuffer wbuffer = wxConvLocal.cMB2WC(buffer);
 		D.Text = wxString(wbuffer);*/
 	}
+	return A;
 }
 
 
 // ============================================================================
 //  MEGUID
 // ============================================================================
-void operator << (MEArchive& A, MEGUID& D)
+MEArchive& operator << (MEArchive& A, MEGUID& D)
 {
 	A << D.Data[0];
 	A << D.Data[1];
 	A << D.Data[2];
 	A << D.Data[3];
+	return A;
 }
 
 // ============================================================================
 //  MEUNICODEZ
 // ============================================================================
-void operator << (MEArchive& A, MEUNICODEZ& D)
+MEArchive& operator << (MEArchive& A, MEUNICODEZ& D)
 {
 	D.Text.clear();
 	std::vector<char> chars;
 	char c;
 	do { A << c; chars.push_back(c); } while (c != 0);
 	D.Text = std::string(&chars[0]);
+	return A;
 }
 
 
 // ============================================================================
 //  MEASCIIZ
 // ============================================================================
-void operator << (MEArchive& A, MEASCIIZ& D)
+MEArchive& operator << (MEArchive& A, MEASCIIZ& D)
 {
 	D.Text.clear();
 	std::vector<char> chars;
 	char c;
 	do { A << c; chars.push_back(c); } while (c != 0);
 	D.Text = std::string(&chars[0]);
+	return A;
 }

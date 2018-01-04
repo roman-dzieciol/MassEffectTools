@@ -9,11 +9,12 @@ public:
 	MEPackageGeneration();
 	~MEPackageGeneration();
 
-	friend void operator << (MEArchive& A, MEPackageGeneration& D)
+	friend MEArchive& operator << (MEArchive& A, MEPackageGeneration& D)
 	{
 		A << D.ExportCount;
 		A << D.NameCount;
 		A << D.NetObjectCount;
+		return A;
 	}
 };
 
