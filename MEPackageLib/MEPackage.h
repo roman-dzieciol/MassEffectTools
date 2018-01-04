@@ -9,18 +9,18 @@ class MEPackage
 public:
 
 	MEPackageHeader Header;
+
+	std::vector<FCompressedChunkHeader> ChunkHeaders;
+
 	MENameTable NameTable;
 
 	MEPackage();
 	~MEPackage();
 	
+	virtual void SerializeHeader(MEArchive& A);
+	virtual void SerializeContents(MEArchive& A);
 
-	friend void operator << (MEArchive& A, MEPackage& D) {
-		A << D.Header;
-
-		//A.Seek(D.Header.NameOffset);
-		//A << D.NameTable;
-	}
+	friend void operator << (MEArchive& A, MEPackage& D);
 
 };
 

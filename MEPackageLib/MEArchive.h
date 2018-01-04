@@ -63,27 +63,29 @@ public:
 
 public:
 	virtual void			Seek(dword pos, SeekMode from = SeekMode::FromStart) = 0;
-	virtual void			SeekEnd(dword pos = 0) = 0;
-	virtual dword			Tell() = 0;
-	virtual dword			Length() = 0;
+	virtual dword			Tell() const = 0;
+	virtual dword			Length() const = 0;
 
 public:
-	virtual bool			IsOpened() = 0;
-	virtual bool			IsLoading() = 0;
-	virtual bool			IsSaving() = 0;
+	virtual bool			IsOpened() const = 0;
+	virtual bool			IsLoading() const = 0;
+	virtual bool			IsSaving() const = 0;
+	virtual bool			IsDecompressed() const = 0;
+	virtual void			SetDecompressed(bool bFlag) = 0;
 
 public:
 	virtual void			PushGuard(dword from, dword to) = 0;
 	virtual void			PopGuard() = 0;
-	virtual MEFileGuard		GetGuard() = 0;
+	virtual MEFileGuard		GetGuard() const = 0;
 
 public:
 	virtual void			SetByteInfo(EByteInfo info) = 0;
-	virtual EByteInfo		GetByteInfo() = 0;
+	virtual EByteInfo		GetByteInfo() const = 0;
+	virtual byte*			GetDataPtr() = 0;
 
 public:
-	virtual std::string		DebugInfo() = 0;
-	virtual void			DumpByteInfo() = 0;
+	virtual std::string		DebugInfo() const = 0;
+	virtual void			DumpByteInfo() const = 0;
 
 public:
 	friend void operator << (MEArchive& A, qword& D) { A.Serialize(&D, sizeof(qword)); /*wxUINT64_SWAP_ON_?E(D);*/ }

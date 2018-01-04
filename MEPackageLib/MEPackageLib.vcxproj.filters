@@ -63,6 +63,9 @@
     <ClInclude Include="MEUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MEPackageLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -93,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MEUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MEPackageLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

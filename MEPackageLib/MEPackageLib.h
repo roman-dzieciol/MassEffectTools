@@ -13,3 +13,4 @@
 #include "MEPackageHeader.h"
 #include "MEPackageGeneration.h"
 #include "MEFile.h"
+#include "MEPackageLoader.h"

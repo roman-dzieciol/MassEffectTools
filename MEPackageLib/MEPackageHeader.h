@@ -36,6 +36,7 @@ public:
 	MEFArray<MECompressedChunkInfo> ChunkInfo;
 	dword		Unknown8;
 	dword		Unknown9;
+
 	// Unknown
 
 

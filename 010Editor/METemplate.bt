@@ -25,6 +25,20 @@ struct MECompressedChunkInfo {
 	int CompressedSize;
 };
 
+struct FCompressedChunkBlock
+{
+    int CompressedSize;
+    int UncompressedSize;
+};
+
+struct FCompressedChunkHeader
+{
+    int Signature;          // equals to PACKAGE_FILE_TAG (0x9E2A83C1)
+    int BlockSize;          // maximal size of uncompressed block, always the same
+    FCompressedChunkBlock Summary;
+    FCompressedChunkBlock Blocks[(Summary.UncompressedSize + 0x20000 - 1) / 0x20000] <optimize=false>;
+};
+
 struct FEngineVersion {
     uint16 InMajor;
     uint16 InMinor;
@@ -62,6 +76,7 @@ struct Header {
     int ChunkInfoCount;
 	MECompressedChunkInfo ChunkInfo[ChunkInfoCount];
     int stuff3[2] <format=hex>;
+    FCompressedChunkHeader blocks[ChunkInfoCount] <optimize=false>;
 
 };
 

@@ -25,3 +25,38 @@ public:
 	}
 };
 
+
+struct FCompressedChunkBlock
+{
+	dword CompressedSize;
+	dword UncompressedSize;
+
+	friend void operator << (MEArchive& A, FCompressedChunkBlock& D)
+	{
+		A << D.CompressedSize;
+		A << D.UncompressedSize;
+	}
+};
+
+struct FCompressedChunkHeader
+{
+	dword Signature;          // equals to PACKAGE_FILE_TAG (0x9E2A83C1)
+	dword BlockSize;          // maximal size of uncompressed block, always the same
+	FCompressedChunkBlock Summary;
+	std::vector<FCompressedChunkBlock> Blocks;
+
+	friend void operator << (MEArchive& A, FCompressedChunkHeader& D)
+	{
+		A << D.Signature;
+		A << D.BlockSize;
+		A << D.Summary;
+
+		auto blockCount = (D.Summary.UncompressedSize + D.BlockSize - 1) / D.BlockSize;
+		for (dword i = 0; i != blockCount; ++i) {
+			FCompressedChunkBlock block;
+			A << block;
+			D.Blocks.push_back(block);
+		}
+	}
+};
+

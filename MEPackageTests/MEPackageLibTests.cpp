@@ -13,10 +13,8 @@ namespace MEPackageTests
 		
 		TEST_METHOD(TestItLoadsCore)
 		{
-			MEFileReader f(fs::path("C:\\_MECoop\\Core.u"));
-			auto pkg = MEPackage();
-
-			f << pkg;
+			MEPackageLoader loader;
+			loader.Load(fs::path("C:\\_MECoop\\Core.u"));
 		}
 
 	};

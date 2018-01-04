@@ -8,58 +8,13 @@
 // ============================================================================
 //	MEFileBuffer
 // ============================================================================
-void MEFileBuffer::DumpByteInfo()
-{
-	//wxLogMessage( wxT("ByteInfo:") );
 
-	//if( !Markers )
-	//	return;
-
-	/*if (Data.size() > 0)
-	{
-	int from = 0;
-	EByteInfo lastinfo = static_cast<EByteInfo>(Markers[0]);
-
-	for (dword i = 0; i != Data.size(); ++i)
-	{
-	if (Markers[i] != lastinfo)
-	{
-	wxLogMessage(wxString::Format(wxT("<0x%.8x 0x%.8x> %s")
-	, static_cast<dword>(from)
-	, static_cast<dword>(i - 1)
-	, PF_STR(upGetByteInfoName(lastinfo))
-	));
-	lastinfo = static_cast<EByteInfo>(Markers[i]);
-	from = i;
-	}
-	}
-
-	wxLogMessage(wxString::Format(wxT("<0x%.8x 0x%.8x> %s")
-	, static_cast<dword>(from)
-	, static_cast<dword>(Data.size() - 1)
-	, PF_STR(upGetByteInfoName(lastinfo))
-	));
-	}
-
-	wxLogMessage(wxString::Format(wxT("<0x%.8x> EOF")
-	, static_cast<dword>(Size)
-	));*/
-}
 
 
 // ============================================================================
-//	MEFile
+//	MEFileArchive
 // ============================================================================
-MEFile::MEFile(const fs::path& path) : Path(path)
-{
-	Stream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-}
-
-MEFile::~MEFile()
-{
-}
-
-std::string MEFile::DebugInfo()
+std::string MEFileArchive::DebugInfo() const
 {
 	//wxString S;
 	//S += wxString::Format(wxT(" N:<%s>"), PF_STR(FileName.GetName()));
@@ -72,21 +27,46 @@ std::string MEFile::DebugInfo()
 	return "";
 }
 
-// ============================================================================
-//	MEFileReader
-// ============================================================================
-MEFileReader::MEFileReader(const fs::path& path) : MEFile(path)
-{
-	//UP_TIMER(t);
+void MEFileArchive::DumpByteInfo() const
+{/*
+ //wxLogMessage( wxT("ByteInfo:") );
 
-	Stream.open(path.c_str(), std::ios::binary || std::ios::in);
+ //if( !Markers )
+ //	return;
 
-	Buf.Init(Stream);
+ if (Data.size() > 0)
+ {
+ int from = 0;
+ EByteInfo lastinfo = static_cast<EByteInfo>(Markers[0]);
 
-	//UP_TIMER_LOGF(t,0);
+ for (dword i = 0; i != Data.size(); ++i)
+ {
+ if (Markers[i] != lastinfo)
+ {
+ wxLogMessage(wxString::Format(wxT("<0x%.8x 0x%.8x> %s")
+ , static_cast<dword>(from)
+ , static_cast<dword>(i - 1)
+ , PF_STR(upGetByteInfoName(lastinfo))
+ ));
+ lastinfo = static_cast<EByteInfo>(Markers[i]);
+ from = i;
+ }
+ }
+
+ wxLogMessage(wxString::Format(wxT("<0x%.8x 0x%.8x> %s")
+ , static_cast<dword>(from)
+ , static_cast<dword>(Data.size() - 1)
+ , PF_STR(upGetByteInfoName(lastinfo))
+ ));
+ }
+
+ wxLogMessage(wxString::Format(wxT("<0x%.8x> EOF")
+ , static_cast<dword>(Size)
+ ));*/
 }
 
-void MEFileReader::Decompress(std::vector<MECompressedChunkInfo>& chunks, MECompressionFlags flags)
+/*
+void MEFileReader::Decompress(const std::vector<MECompressedChunkInfo>& chunks, MECompressionFlags flags)
 {
 
 	// Verify
@@ -99,7 +79,6 @@ void MEFileReader::Decompress(std::vector<MECompressedChunkInfo>& chunks, MEComp
 		throw MEException("Unknown data after last chunk: %s", chunks.back().DebugInfo().c_str());
 	}
 
-	MECompressedChunkInfo* lastChunk = nullptr;
 	for (dword i = 0; i != chunks.size(); ++i) {
 		if (i > 0) {
 			if (chunks[i - 1].CompressedOffset + chunks[i - 1].CompressedSize != chunks[i].CompressedOffset) {
@@ -118,23 +97,21 @@ void MEFileReader::Decompress(std::vector<MECompressedChunkInfo>& chunks, MEComp
 		}
 	}
 
-	const dword headerSize = chunks.front().UncompressedOffset;
-	const dword totalSize = chunks.back().UncompressedOffset + chunks.back().UncompressedSize;
-	const dword uncompressedSize = totalSize - headerSize;
+	const dword totalUncompressedSize = chunks.back().UncompressedOffset + chunks.back().UncompressedSize;
 
 	const dword maxSize = 1024 * 1024 * 1024; // 1GB
-	if (totalSize > maxSize) {
-		throw MEException("Package too big to decompress: %d", totalSize);
+	if (totalUncompressedSize > maxSize) {
+		throw MEException("Package too big to decompress: %d", totalUncompressedSize);
 	}
 
 	MEFileReadBuffer& compressed = Buf;
 	MEFileReadBuffer uncompressed;
-	uncompressed.InitSize(totalSize);
+	uncompressed.InitSize(totalUncompressedSize);
 
 	compressed.Seek(0);
-	compressed.Read(uncompressed.GetDataPtr(), headerSize);
+	compressed.Read(uncompressed.GetDataPtr(), chunks.front().CompressedOffset);
 
-	dword uncompressedOffset = headerSize;
+	dword uncompressedOffset = chunks.back().UncompressedOffset;
 	for (dword i = 0; i != chunks.size(); ++i) {
 		MECompression::UncompressMemory(flags,
 			uncompressed.GetDataPtr() + chunks[i].UncompressedOffset, chunks[i].UncompressedSize,
@@ -143,8 +120,4 @@ void MEFileReader::Decompress(std::vector<MECompressedChunkInfo>& chunks, MEComp
 
 	Buf = uncompressed;
 }
-
-void MEFileReader::DumpByteInfo()
-{
-	Buf.DumpByteInfo();
-}
+*/

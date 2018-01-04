@@ -69,7 +69,7 @@ class MEFArray
 {
 public:
 	dword Count() const { return Values.size(); }
-	std::vector<T>& Array() const { return Values; }
+	std::vector<T>& Array() { return Values; }
 
 	friend void operator << (MEArchive& A, MEFArray<T>& D)
 	{
@@ -93,7 +93,7 @@ private:
 };
 
 class MENameTableItem {
-
+public:
 	MEString Name;
 	qword Flags;
 
@@ -104,5 +104,14 @@ class MENameTableItem {
 	}
 };
 
-class MENameTable : public MEFArray<MENameTableItem> {
+class MENameTable {
+public:
+	std::vector<MENameTableItem> Items;
+
+	friend void operator << (MEArchive& A, MENameTable& D)
+	{
+		for (auto& item : D.Items) {
+			A << item;
+		}
+	}
 };
