@@ -26,6 +26,7 @@ class MEGUID
 {
 public:
 	friend MEArchive& operator << (MEArchive& A, MEGUID& D);
+	std::string String() const;
 
 private:
 	dword Data[4];
@@ -145,7 +146,7 @@ public:
 
 class MENameIndex {
 public:
-	dword Name;
+	int32 Name;
 	dword Number;
 
 	friend MEArchive& operator << (MEArchive& A, MENameIndex& D)
@@ -158,11 +159,13 @@ public:
 
 class MEObjectIndex {
 public:
-	dword Index;
+	int32 Value;
+
+	explicit MEObjectIndex(int32 value=0) : Value(value) {}
 
 	friend MEArchive& operator << (MEArchive& A, MEObjectIndex& D)
 	{
-		A << D.Index;
+		A << D.Value;
 		return A;
 	}
 };
@@ -171,7 +174,7 @@ class MEImportTableItem {
 public:
 	MENameIndex PackageName;
 	MENameIndex ClassName;
-	dword OuterIndex;
+	MEObjectIndex OuterIndex;
 	MENameIndex ObjectName;
 
 	friend MEArchive& operator << (MEArchive& A, MEImportTableItem& D)

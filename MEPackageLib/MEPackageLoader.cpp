@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MEPackageLoader.h"
 #include <iostream>
+#include "MEExporterSQL.h"
 
 MEPackageLoader::MEPackageLoader()
 {
@@ -21,20 +22,36 @@ void MEPackageLoader::Load(fs::path path)
 
 	if (pkg.Header.CompressionFlags != (dword)MECompressionFlags::None && !f.IsDecompressed()) {
 		//f.Decompress(pkg.Header.ChunkInfo.Array(), static_cast<MECompressionFlags>(pkg.Header.CompressionFlags));
-		auto uncompressed = UncompressPackage(pkg, f);
-		uncompressed->Seek(0);
+		auto A = UncompressPackage(pkg, f);
+		A->Seek(0);
 
 		auto inflatedPath = path;
 		inflatedPath.replace_extension(".inflated");
 		auto inflatedStream = std::fstream(inflatedPath.string(), std::ios::binary | std::ios::out | std::ios::trunc);
-		inflatedStream.write((const char*)uncompressed->GetDataPtr(), uncompressed->Length());
+		inflatedStream.write((const char*)A->GetDataPtr(), A->Length());
 
-		uncompressed->Seek(0);
-		auto uncompressedPackage = MEPackage();
-		*uncompressed << uncompressedPackage;
+		A->Seek(0);
+		auto upkg = MEPackage();
+		*A << upkg;
 
-		auto byteInfo = uncompressed->DumpByteInfo();
+		for (auto& exportItem : upkg.ExportTable.Items) {
+			A->Seek(exportItem.SerialOffset);
+			UP_BYTE_MARKER(object, *A, A->Tell(), BI_Object);
+			A->Serialize(nullptr, exportItem.SerialSize);
+		}
+
+		for (int i = 0; i != upkg.ExportTable.Items.size(); ++i) {
+			std::cout << upkg.GetObjectPath(MEObjectIndex(i+1)) << std::endl;
+		}
+
+		auto byteInfo = A->DumpByteInfo();
 		std::cout << byteInfo << std::endl;
+
+		auto sqlPath = path;
+		sqlPath.replace_extension(".sql");
+		auto sqlStream = std::fstream(sqlPath.string(), std::ios::out | std::ios::trunc);
+		auto sqlExporter = MEExporterSQL(sqlStream);
+		sqlExporter.ExportPackage(upkg);
 		
 		//f.SetDecompressed(true);
 		//f << pkg;

@@ -101,7 +101,9 @@ public:
 			memset(&Markers UP_AT(Offset), static_cast<byte>(ByteInfo), count);
 
 			// Read
-			memcpy(buffer, &Data UP_AT(Offset), count);
+			if (buffer) {
+				memcpy(buffer, &Data UP_AT(Offset), count);
+			}
 			Offset += count;
 		}
 		else

@@ -148,7 +148,7 @@ FSeek(header.NameOffset);
 FSeek(header.ImportOffset);
     FImportTable importTable(header.ImportCount);
 FSeek(header.ExportOffset);
-    //FExportTable exportTable(header.ExportCount);
+    FExportTable exportTable(header.ExportCount);
 };
 
 Package package;

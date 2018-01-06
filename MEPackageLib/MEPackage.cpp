@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MEPackage.h"
-
+#include <sstream>
 
 MEPackage::MEPackage()
 {
@@ -49,6 +49,34 @@ MEArchive& operator << (MEArchive& A, MEPackage& D) {
 
 	D.SerializeContents(A);
 	return A;
+}
+
+
+std::string MEPackage::GetObjectPath(MEObjectIndex r)
+{
+	std::string S;
+
+	if (r.Value == 0)
+		return "";
+
+	// object name
+	S = GetObjectName(r);
+	r = GetSuperClass(r);
+	if (r.Value == 0)
+		return S;
+
+	// package path
+	const int MaxPackagePath = 255;
+	for (int i = 0; i != MaxPackagePath; ++i)
+	{
+		auto outer = GetObjectName(r);
+		S = MEFormat("%s.%s", outer.c_str(), S.c_str());
+		r = GetSuperClass(r);
+		if (r.Value == 0)
+			return S;
+	}
+
+	throw MEException("Object path depth > %d", MaxPackagePath);
 }
 
 

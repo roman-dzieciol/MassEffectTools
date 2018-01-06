@@ -14,15 +14,17 @@ MEArchive& operator << (MEArchive& A, MEString& D)
 		if (length > 1000000) {
 			throw MEException("MEString length too big: %d, %s", length, A.DebugInfo().c_str());
 		}
-		char* ascii_str = new char[length];
-		A.Serialize(ascii_str, length);
-		D.Text = std::string(ascii_str, length);
-		delete[]ascii_str;
+		std::vector<char> chars(length, 0);
+		A.Serialize(&chars[0], length);
+		if (length > 1 && chars[length - 1] == 0) {
+			length -= 1;
+			chars.resize(length);
+		}
+		for (char& c : chars) {
+			c = MESanitizeAscii(c);
+		}
 
-		/*wxCharBuffer buffer(length);
-		A.Serialize( buffer.data(), length );
-		wxWCharBuffer wbuffer = wxConvLocal.cMB2WC(buffer);
-		D.Text = wxString(wbuffer);*/
+		D.Text = std::string(&chars[0], length);
 	}
 	return A;
 }
@@ -40,6 +42,10 @@ MEArchive& operator << (MEArchive& A, MEGUID& D)
 	return A;
 }
 
+std::string MEGUID::String() const {
+	return MEFormat("{%0.8x-%0.8x-%0.8x-%0.8x}", Data[0], Data[1], Data[2], Data[3]);
+}
+
 // ============================================================================
 //  MEUNICODEZ
 // ============================================================================
@@ -48,7 +54,13 @@ MEArchive& operator << (MEArchive& A, MEUNICODEZ& D)
 	D.Text.clear();
 	std::vector<char> chars;
 	char c;
-	do { A << c; chars.push_back(c); } while (c != 0);
+	do { 
+		A << c;
+		if (c != 0) {
+			c = MESanitizeAscii(c);
+		}
+		chars.push_back(c); 
+	} while (c != 0);
 	D.Text = std::string(&chars[0]);
 	return A;
 }
@@ -62,7 +74,13 @@ MEArchive& operator << (MEArchive& A, MEASCIIZ& D)
 	D.Text.clear();
 	std::vector<char> chars;
 	char c;
-	do { A << c; chars.push_back(c); } while (c != 0);
+	do { 
+		A << c; 
+		if (c != 0) {
+			c = MESanitizeAscii(c);
+		}
+		chars.push_back(c); 
+	} while (c != 0);
 	D.Text = std::string(&chars[0]);
 	return A;
 }

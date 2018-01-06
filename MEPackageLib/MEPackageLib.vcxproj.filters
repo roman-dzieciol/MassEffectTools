@@ -66,6 +66,12 @@
     <ClInclude Include="MEPackageLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MEExporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MEExporterSQL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -99,6 +105,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MEPackageLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MEExporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MEExporterSQL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

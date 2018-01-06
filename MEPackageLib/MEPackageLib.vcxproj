@@ -163,6 +163,8 @@
     <ClInclude Include="MECompression.h" />
     <ClInclude Include="MEConstants.h" />
     <ClInclude Include="MEException.h" />
+    <ClInclude Include="MEExporter.h" />
+    <ClInclude Include="MEExporterSQL.h" />
     <ClInclude Include="MEFile.h" />
     <ClInclude Include="MEPackage.h" />
     <ClInclude Include="MEPackageGeneration.h" />
@@ -178,6 +180,8 @@
     <ClCompile Include="MEComplexTypes.cpp" />
     <ClCompile Include="MECompressedChunkInfo.cpp" />
     <ClCompile Include="MECompression.cpp" />
+    <ClCompile Include="MEExporter.cpp" />
+    <ClCompile Include="MEExporterSQL.cpp" />
     <ClCompile Include="MEFile.cpp" />
     <ClCompile Include="MEPackage.cpp" />
     <ClCompile Include="MEPackageGeneration.cpp" />
