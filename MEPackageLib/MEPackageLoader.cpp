@@ -13,6 +13,37 @@ MEPackageLoader::~MEPackageLoader()
 {
 }
 
+void LoadObjects(MEFileArchive& A, MEPackage& D) {
+
+	for (auto& exportItem : D.ExportTable.Items) {
+		A.Seek(exportItem.SerialOffset);
+		UP_OFFSET_GUARD(object, A, exportItem.SerialOffset, exportItem.SerialOffset + exportItem.SerialSize);
+		UP_BYTE_MARKER(object, A, A.Tell(), BI_Object);
+		A.Serialize(nullptr, exportItem.SerialSize);
+	}
+}
+
+void DumpPackage(MEFileArchive& A, MEPackage& D, fs::path path) {
+	for (int i = 0; i != D.ExportTable.Items.size(); ++i) {
+		auto& item = D.ExportTable.Items[i];
+		std::cout << D.GetObjectPath(MEObjectIndex(i + 1)) << std::endl;
+	}
+
+	// Dump byte info
+	auto byteInfo = A.DumpByteInfo();
+	std::cout << byteInfo << std::endl;
+
+
+	// Dump SQL
+	auto sqlPath = path;
+	sqlPath.replace_extension(".sql");
+	auto sqlStream = std::fstream(sqlPath.string(), std::ios::out | std::ios::trunc);
+	auto sqlExporter = MEExporterSQL(sqlStream);
+	sqlExporter.ExportPackage(D);
+
+	//f.SetDecompressed(true);
+	//f << pkg;
+}
 
 void MEPackageLoader::Load(fs::path path) 
 {
@@ -42,40 +73,15 @@ void MEPackageLoader::Load(fs::path path)
 
 		*A << upkg;
 
-		for (auto& exportItem : upkg.ExportTable.Items) {
-			A->Seek(exportItem.SerialOffset);
-			UP_BYTE_MARKER(object, *A, A->Tell(), BI_Object);
-			A->Serialize(nullptr, exportItem.SerialSize);
-		}
-
-		for (int i = 0; i != upkg.ExportTable.Items.size(); ++i) {
-
-			auto& item = upkg.ExportTable.Items[i];
-
-
-
-			std::cout << upkg.GetObjectPath(MEObjectIndex(i+1)) << std::endl;
-		}
-
-
-
-
-
-		// Dump byte info
-		auto byteInfo = A->DumpByteInfo();
-		std::cout << byteInfo << std::endl;
-
-
-		// Dump SQL
-		auto sqlPath = path;
-		sqlPath.replace_extension(".sql");
-		auto sqlStream = std::fstream(sqlPath.string(), std::ios::out | std::ios::trunc);
-		auto sqlExporter = MEExporterSQL(sqlStream);
-		sqlExporter.ExportPackage(upkg);
-		
-		//f.SetDecompressed(true);
-		//f << pkg;
+		LoadObjects(*A, upkg);
+		DumpPackage(*A, upkg, path);
 	}
+	else {
+
+		LoadObjects(f, pkg);
+		DumpPackage(f, pkg, path);
+	}
+	
 }
 
 std::unique_ptr<MEFileArchive> MEPackageLoader::UncompressPackage(MEPackage& Package, MEFileArchive& Archive) {

@@ -291,3 +291,39 @@ std::string StringFromEnum(EObjectFlags flag) {
 	return MEFormat("0x%" PRIx64, (qword)flag);
 }
 
+std::string StringFromEnum(EFunctionFlags flag) {
+	switch (flag) {
+	case EFunctionFlags::FUNC_None: return "None";
+	case EFunctionFlags::FUNC_Final: return "Final";
+	case EFunctionFlags::FUNC_RequiredAPI: return "RequiredAPI";
+	case EFunctionFlags::FUNC_BlueprintAuthorityOnly: return "BlueprintAuthorityOnly";
+	case EFunctionFlags::FUNC_BlueprintCosmetic: return "BlueprintCosmetic";
+	case EFunctionFlags::FUNC_Net: return "Net";
+	case EFunctionFlags::FUNC_NetReliable: return "NetReliable";
+	case EFunctionFlags::FUNC_NetRequest: return "NetRequest";
+	case EFunctionFlags::FUNC_Exec: return "Exec";
+	case EFunctionFlags::FUNC_Native: return "Native";
+	case EFunctionFlags::FUNC_Event: return "Event";
+	case EFunctionFlags::FUNC_NetResponse: return "NetResponse";
+	case EFunctionFlags::FUNC_Static: return "Static";
+	case EFunctionFlags::FUNC_NetMulticast: return "NetMulticast";
+	case EFunctionFlags::FUNC_MulticastDelegate: return "MulticastDelegate";
+	case EFunctionFlags::FUNC_Public: return "Public";
+	case EFunctionFlags::FUNC_Private: return "Private";
+	case EFunctionFlags::FUNC_Protected: return "Protected";
+	case EFunctionFlags::FUNC_Delegate: return "Delegate";
+	case EFunctionFlags::FUNC_NetServer: return "NetServer";
+	case EFunctionFlags::FUNC_HasOutParms: return "HasOutParms";
+	case EFunctionFlags::FUNC_HasDefaults: return "HasDefaults";
+	case EFunctionFlags::FUNC_NetClient: return "NetClient";
+	case EFunctionFlags::FUNC_DLLImport: return "DLLImport";
+	case EFunctionFlags::FUNC_BlueprintCallable: return "BlueprintCallable";
+	case EFunctionFlags::FUNC_BlueprintEvent: return "BlueprintEvent";
+	case EFunctionFlags::FUNC_BlueprintPure: return "BlueprintPure";
+	case EFunctionFlags::FUNC_EditorOnly: return "EditorOnly";
+	case EFunctionFlags::FUNC_Const: return "Const";
+	case EFunctionFlags::FUNC_NetValidate: return "NetValidate";
+	}
+	return MEFormat("0x%x", (dword)flag);
+}
+
