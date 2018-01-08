@@ -1,0 +1,41 @@
+
+
+struct FName {
+    DWORD Index <format=hex>;
+    DWORD Number;
+};
+
+struct FPropertyTag {
+    FName Type <open=true>;
+};
+
+struct UObject {
+    DWORD NetIndex;	
+};
+
+struct UField {
+    UObject Object <open=true>;
+    DWORD Next;
+};
+
+struct UStruct {
+    UField Field <open=true>;
+    FPropertyTag Tag <open=true>;
+};
+
+struct UFunction {
+    UStruct Struct <open=true>;
+    DWORD unk1[13];
+	//DWORD scriptsize;
+	//DWORD* script;
+	//DWORD fidx;
+	//BYTE prec;
+	//DWORD flags;
+	//WORD netstuff;
+	//DWORD fname;
+	//DWORD unk2;
+};
+
+//FSeek(128033);
+FSeek(152905);
+UFunction function <open=true>;

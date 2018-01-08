@@ -60,6 +60,7 @@ public:
 
 public:
 	virtual void			Serialize(void* buffer, dword count) = 0;
+	virtual MEFLinker*		GetLinker() = 0;
 
 public:
 	virtual void			Seek(dword pos, SeekMode from = SeekMode::FromStart) = 0;

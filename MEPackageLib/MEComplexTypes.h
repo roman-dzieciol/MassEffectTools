@@ -3,6 +3,10 @@
 #include <string>
 #include "MEArchive.h"
 #include "MEBasicTypes.h"
+#include "MEFName.h"
+#include "MEObjectIndex.h"
+#include "MENameTableIndex.h"
+#include "MEFlags.h"
 
 // ============================================================================
 //  MEString
@@ -144,38 +148,15 @@ public:
 };
 
 
-class MENameIndex {
-public:
-	int32 Name;
-	dword Number;
 
-	friend MEArchive& operator << (MEArchive& A, MENameIndex& D)
-	{
-		A << D.Name;
-		A << D.Number;
-		return A;
-	}
-};
 
-class MEObjectIndex {
-public:
-	int32 Value;
-
-	explicit MEObjectIndex(int32 value=0) : Value(value) {}
-
-	friend MEArchive& operator << (MEArchive& A, MEObjectIndex& D)
-	{
-		A << D.Value;
-		return A;
-	}
-};
 
 class MEImportTableItem {
 public:
-	MENameIndex PackageName;
-	MENameIndex ClassName;
+	MEFName PackageName;
+	MEFName ClassName;
 	MEObjectIndex OuterIndex;
-	MENameIndex ObjectName;
+	MEFName ObjectName;
 
 	friend MEArchive& operator << (MEArchive& A, MEImportTableItem& D)
 	{
@@ -206,20 +187,21 @@ public:
 	MEObjectIndex ClassObject;
 	MEObjectIndex SuperObject;
 	MEObjectIndex OuterObject;
-	MENameIndex ObjectName;
+	MEFName ObjectName;
 	MEObjectIndex ArchetypeObject;
-	qword ObjectFlags;
+	MEFlags<EObjectFlags, dword> ObjectFlags;
+	MEFlags<EObjectFlags, dword> ObjectFlags2;
 	dword SerialSize;
 	dword SerialOffset;
 
-	TMap<MENameIndex, MEObjectIndex> Components;
+	TMap<MEFName, MEObjectIndex> Components;
 
 	dword ExportFlags;
 
 	MEFArray<MEObjectIndex> NetObjects;
 
 	MEGUID PackageGUID;
-	dword PackageFlags;
+	MEFlags<EPackageFlags, dword> PackageFlags;
 
 	friend MEArchive& operator << (MEArchive& A, MEExportTableItem& D)
 	{
@@ -229,6 +211,7 @@ public:
 		A << D.ObjectName;
 		A << D.ArchetypeObject;
 		A << D.ObjectFlags;
+		A << D.ObjectFlags2;
 		A << D.SerialSize;
 		A << D.SerialOffset;
 		A << D.Components;

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "MEExporterSQL.h"
 #include <sstream>
-
+#include <iomanip>
 
 
 MEExporterSQL::~MEExporterSQL()
@@ -23,9 +23,9 @@ void MEExporterSQL::ExportPackage(MEPackage& Package) {
 	s << std::endl;
 	
 	s << "CREATE TABLE NameTable (";
-	s << "rowid INTEGER PRIMARY KEY,";
-	s << "Flags INTEGER,";
-	s << "Name TEXT";
+	s << "rowid INTEGER PRIMARY KEY";
+	s << "," << "Flags INTEGER";
+	s << "," << "Name TEXT";
 	s << ");";
 	s << std::endl;
 	{
@@ -42,19 +42,19 @@ void MEExporterSQL::ExportPackage(MEPackage& Package) {
 
 
 	s << "CREATE TABLE ImportTable (";
-	s << "rowid INTEGER PRIMARY KEY,";
-	s << "_Path TEXT,";
-	s << "_Package TEXT,";
-	s << "_Class TEXT,";
-	s << "_Outer TEXT,";
-	s << "_Object TEXT,";
-	s << "PackageName INTEGER,";
-	s << "PackageNameNum INTEGER,";
-	s << "ClassName INTEGER,";
-	s << "ClassNameNum INTEGER,";
-	s << "OuterIndex INTEGER,";
-	s << "ObjectName INTEGER,";
-	s << "ObjectNameNum INTEGER";
+	s << "rowid INTEGER PRIMARY KEY";
+	s << "," << "_Path TEXT";
+	s << "," << "_Package TEXT";
+	s << "," << "_Class TEXT";
+	s << "," << "_Outer TEXT";
+	s << "," << "_Object TEXT";
+	s << "," << "PackageName INTEGER";
+	s << "," << "PackageNameNum INTEGER";
+	s << "," << "ClassName INTEGER";
+	s << "," << "ClassNameNum INTEGER";
+	s << "," << "OuterIndex INTEGER";
+	s << "," << "ObjectName INTEGER";
+	s << "," << "ObjectNameNum INTEGER";
 	s << ");";
 	s << std::endl;
 	{
@@ -68,12 +68,12 @@ void MEExporterSQL::ExportPackage(MEPackage& Package) {
 			s << "," << SQLSafe(Package.GetNameString(item.ClassName));
 			s << "," << SQLSafe(Package.GetObjectName(item.OuterIndex));
 			s << "," << SQLSafe(Package.GetNameString(item.ObjectName));
-			s << "," << item.PackageName.Name;
+			s << "," << item.PackageName.Name.Value;
 			s << "," << item.PackageName.Number;
-			s << "," << item.ClassName.Name;
+			s << "," << item.ClassName.Name.Value;
 			s << "," << item.ClassName.Number;
 			s << "," << item.OuterIndex.Value;
-			s << "," << item.ObjectName.Name;
+			s << "," << item.ObjectName.Name.Value;
 			s << "," << item.ObjectName.Number;
 			s << ");";
 			s << std::endl;
@@ -82,32 +82,52 @@ void MEExporterSQL::ExportPackage(MEPackage& Package) {
 
 
 	s << "CREATE TABLE ExportTable (";
-	s << "rowid INTEGER PRIMARY KEY,";
-	s << "_Path TEXT,";
-	s << "_Class TEXT,";
-	s << "_Super TEXT,";
-	s << "_Outer TEXT,";
-	s << "_Object TEXT,";
-	s << "_Archetype TEXT,";
-	s << "ClassObject INTEGER,";
-	s << "SuperObject INTEGER,";
-	s << "OuterObject INTEGER,";
-	s << "ObjectName INTEGER,";
-	s << "ObjectNameNum INTEGER,";
-	s << "ArchetypeObject INTEGER,";
-	s << "ObjectFlags INTEGER,";
-	s << "SerialSize INTEGER,";
-	s << "SerialOffset INTEGER,";
-	s << "Components TEXT,";
-	s << "ExportFlags INTEGER,";
-	s << "NetObjects TEXT,";
-	s << "PackageGUID TEXT,";
-	s << "PackageFlags INTEGER";
+	s << "rowid INTEGER PRIMARY KEY";
+	s << "," << "_Path TEXT";
+	s << "," << "_Class TEXT";
+	s << "," << "_Super TEXT";
+	s << "," << "_Outer TEXT";
+	s << "," << "_Object TEXT";
+	s << "," << "_Archetype TEXT";
+	s << "," << "ClassObject INTEGER";
+	s << "," << "SuperObject INTEGER";
+	s << "," << "OuterObject INTEGER";
+	s << "," << "ObjectName INTEGER";
+	s << "," << "ObjectNameNum INTEGER";
+	s << "," << "ArchetypeObject INTEGER";
+	s << "," << "ObjectFlags INTEGER";
+	s << "," << "ObjectFlagsStr TEXT";
+	s << "," << "ObjectFlags2 INTEGER";
+	s << "," << "ObjectFlagsStr2 TEXT";
+	s << "," << "SerialSize INTEGER";
+	s << "," << "SerialOffset INTEGER";
+	s << "," << "Components TEXT";
+	s << "," << "ExportFlags INTEGER";
+	s << "," << "NetObjects TEXT";
+	s << "," << "PackageGUID TEXT";
+	s << "," << "PackageFlags INTEGER";
+	s << "," << "PackageFlagsStr TEXT";
+	s << "," << "Data TEXT";
 	s << ");";
 	s << std::endl;
 	{
 		auto rowid = 0;
 		for (auto& item : Package.ExportTable.Items) {
+
+			auto& rawObject = Package.RawObjects[rowid];
+			std::stringstream rawStr;
+			auto maxBytes = std::min(rawObject.size(), (size_t)1024);
+			for (size_t i = 0; i < maxBytes; i++)
+			{
+				rawStr << std::hex << std::setw(2) << std::setfill('0') << (int)rawObject[i];
+				if (i % 4 == 3) {
+					rawStr << " ";
+				}
+				
+			}
+
+
+
 			s << "INSERT INTO ExportTable VALUES(";
 			s << rowid++;
 			s << "," << SQLSafe(Package.GetObjectPath(MEObjectIndex(rowid)));
@@ -119,17 +139,22 @@ void MEExporterSQL::ExportPackage(MEPackage& Package) {
 			s << "," << item.ClassObject.Value;
 			s << "," << item.SuperObject.Value;
 			s << "," << item.OuterObject.Value;
-			s << "," << item.ObjectName.Name;
+			s << "," << item.ObjectName.Name.Value;
 			s << "," << item.ObjectName.Number;
 			s << "," << item.ArchetypeObject.Value;
-			s << "," << item.ObjectFlags;
+			s << "," << item.ObjectFlags.Value;
+			s << "," << SQLSafe(item.ObjectFlags.StringFromFlags());
+			s << "," << item.ObjectFlags2.Value;
+			s << "," << SQLSafe(item.ObjectFlags2.StringFromFlags());
 			s << "," << item.SerialSize;
 			s << "," << item.SerialOffset;
 			s << "," << SQLSafe("");
 			s << "," << item.ExportFlags;
 			s << "," << SQLSafe("");
 			s << "," << SQLSafe("");// << item.PackageGUID.String());
-			s << "," << item.PackageFlags;
+			s << "," << item.PackageFlags.Value;
+			s << "," << SQLSafe(item.PackageFlags.StringFromFlags());
+			s << "," << SQLSafe(rawStr.str());
 			s << ");";
 			s << std::endl;
 		}

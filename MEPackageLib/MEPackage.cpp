@@ -32,6 +32,14 @@ void MEPackage::SerializeContents(MEArchive& A) {
 	ExportTable.Items.reserve(Header.ExportCount);
 	ExportTable.Items.resize(Header.ExportCount);
 	A << ExportTable;
+
+	RawObjects.reserve(Header.ExportCount);
+	for (auto& item : ExportTable.Items) {
+		std::vector<byte> rawObject(item.SerialSize);
+		A.Seek(item.SerialOffset);
+		A.Serialize(&rawObject[0], item.SerialSize);
+		RawObjects.push_back(rawObject);
+	}
 }
 
 MEArchive& operator << (MEArchive& A, MEPackage& D) {
@@ -56,13 +64,13 @@ std::string MEPackage::GetObjectPath(MEObjectIndex r)
 {
 	std::string S;
 
-	if (r.Value == 0)
+	if (r.IsNone())
 		return "";
 
 	// object name
 	S = GetObjectName(r);
 	r = GetSuperClass(r);
-	if (r.Value == 0)
+	if (r.IsNone())
 		return S;
 
 	// package path
@@ -72,7 +80,7 @@ std::string MEPackage::GetObjectPath(MEObjectIndex r)
 		auto outer = GetObjectName(r);
 		S = MEFormat("%s.%s", outer.c_str(), S.c_str());
 		r = GetSuperClass(r);
-		if (r.Value == 0)
+		if (r.IsNone())
 			return S;
 	}
 

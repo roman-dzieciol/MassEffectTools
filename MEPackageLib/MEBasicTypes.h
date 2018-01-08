@@ -21,3 +21,7 @@ typedef const char*			cstr;
 //#endif
 
 
+typedef dword MEObjectNum;
+
+
+class MEFLinker;

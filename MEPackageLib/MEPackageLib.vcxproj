@@ -91,6 +91,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -104,6 +105,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,6 +125,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,6 +143,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,12 +170,23 @@
     <ClInclude Include="MEExporter.h" />
     <ClInclude Include="MEExporterSQL.h" />
     <ClInclude Include="MEFile.h" />
+    <ClInclude Include="MEFlags.h" />
+    <ClInclude Include="MEFLinker.h" />
+    <ClInclude Include="MEFName.h" />
+    <ClInclude Include="MEFPropertyTag.h" />
+    <ClInclude Include="MENameTableIndex.h" />
+    <ClInclude Include="MEObjectIndex.h" />
     <ClInclude Include="MEPackage.h" />
     <ClInclude Include="MEPackageGeneration.h" />
     <ClInclude Include="MEPackageHeader.h" />
     <ClInclude Include="MEPackageLib.h" />
     <ClInclude Include="MEPackageLoader.h" />
+    <ClInclude Include="MEUField.h" />
+    <ClInclude Include="MEUFunction.h" />
+    <ClInclude Include="MEUObject.h" />
+    <ClInclude Include="MEUStruct.h" />
     <ClInclude Include="MEUtils.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -183,10 +198,20 @@
     <ClCompile Include="MEExporter.cpp" />
     <ClCompile Include="MEExporterSQL.cpp" />
     <ClCompile Include="MEFile.cpp" />
+    <ClCompile Include="MEFlags.cpp" />
+    <ClCompile Include="MEFLinker.cpp" />
+    <ClCompile Include="MEFName.cpp" />
+    <ClCompile Include="MEFPropertyTag.cpp" />
+    <ClCompile Include="MENameTableIndex.cpp" />
+    <ClCompile Include="MEObjectIndex.cpp" />
     <ClCompile Include="MEPackage.cpp" />
     <ClCompile Include="MEPackageGeneration.cpp" />
     <ClCompile Include="MEPackageHeader.cpp" />
     <ClCompile Include="MEPackageLoader.cpp" />
+    <ClCompile Include="MEUField.cpp" />
+    <ClCompile Include="MEUFunction.cpp" />
+    <ClCompile Include="MEUObject.cpp" />
+    <ClCompile Include="MEUStruct.cpp" />
     <ClCompile Include="MEUtils.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

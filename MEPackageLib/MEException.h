@@ -40,3 +40,8 @@ public:
 private:
 	std::string m_errorMsg;
 };
+
+class MENotImplemented : public MEException {
+public:
+	MENotImplemented() : MEException("Not implemented") {}
+};

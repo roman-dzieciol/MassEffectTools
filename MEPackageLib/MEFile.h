@@ -117,6 +117,14 @@ public:
 		}
 	}
 
+	virtual MEFLinker* GetLinker() override {
+		return Linker;
+	}
+
+	virtual void SetLinker(MEFLinker* Linker) {
+		this->Linker = Linker;
+	}
+
 	virtual void Seek(dword offset, SeekMode mode = SeekMode::FromStart) override
 	{
 		if (mode == SeekMode::FromStart)		Offset = offset;
@@ -188,5 +196,8 @@ public:
 public:
 	virtual std::string DebugInfo() const override;
 	virtual std::string DumpByteInfo() const override;
+
+private:
+	MEFLinker* Linker;
 };
 

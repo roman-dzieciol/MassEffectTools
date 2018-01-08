@@ -2,6 +2,7 @@
 #include "MEPackageLoader.h"
 #include <iostream>
 #include "MEExporterSQL.h"
+#include "MEFLinker.h"
 
 MEPackageLoader::MEPackageLoader()
 {
@@ -18,12 +19,15 @@ void MEPackageLoader::Load(fs::path path)
 	MEFileArchive f;
 	f.ReadPath(path);
 	auto pkg = MEPackage();
+	auto linker = MEFLinker(&pkg);
+	f.SetLinker(&linker);
 	f << pkg;
 
 	if (pkg.Header.CompressionFlags != (dword)MECompressionFlags::None && !f.IsDecompressed()) {
 		//f.Decompress(pkg.Header.ChunkInfo.Array(), static_cast<MECompressionFlags>(pkg.Header.CompressionFlags));
 		auto A = UncompressPackage(pkg, f);
 		A->Seek(0);
+
 
 		auto inflatedPath = path;
 		inflatedPath.replace_extension(".inflated");
@@ -32,6 +36,10 @@ void MEPackageLoader::Load(fs::path path)
 
 		A->Seek(0);
 		auto upkg = MEPackage();
+
+		auto ulinker = MEFLinker(&upkg);
+		A->SetLinker(&ulinker);
+
 		*A << upkg;
 
 		for (auto& exportItem : upkg.ExportTable.Items) {
@@ -41,12 +49,24 @@ void MEPackageLoader::Load(fs::path path)
 		}
 
 		for (int i = 0; i != upkg.ExportTable.Items.size(); ++i) {
+
+			auto& item = upkg.ExportTable.Items[i];
+
+
+
 			std::cout << upkg.GetObjectPath(MEObjectIndex(i+1)) << std::endl;
 		}
 
+
+
+
+
+		// Dump byte info
 		auto byteInfo = A->DumpByteInfo();
 		std::cout << byteInfo << std::endl;
 
+
+		// Dump SQL
 		auto sqlPath = path;
 		sqlPath.replace_extension(".sql");
 		auto sqlStream = std::fstream(sqlPath.string(), std::ios::out | std::ios::trunc);

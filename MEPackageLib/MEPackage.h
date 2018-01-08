@@ -17,6 +17,8 @@ public:
 	MEImportTable ImportTable;
 	MEExportTable ExportTable;
 
+	std::vector< std::vector<byte> > RawObjects;
+
 	MEPackage();
 	~MEPackage();
 	
@@ -26,12 +28,12 @@ public:
 
 	friend MEArchive& operator << (MEArchive& A, MEPackage& D);
 
-	std::string GetNameString(dword i)
+	std::string GetNameString(MENameTableIndex i)
 	{
-		return NameTable.Items[i].Name;
+		return NameTable.Items.at(i.Value).Name;
 	}
 
-	std::string GetNameString(MENameIndex nameIndex)
+	std::string GetNameString(MEFName nameIndex)
 	{
 		auto name = GetNameString(nameIndex.Name);
 		if (nameIndex.Number != 0) {
@@ -40,31 +42,41 @@ public:
 		return name;
 	}
 
+	MEObjectNum GetObjectNum(const MEObjectIndex index) const {
+		if (index.IsExport()) {
+			const MEObjectNum num = index.Value - 1;
+			if (num < ExportTable.Items.size()) {
+				return num;
+			}
+		}
+		else if (index.IsImport()) {
+			const MEObjectNum num = -index.Value - 1;
+			if (num < ImportTable.Items.size()) {
+				return num;
+			}
+		}
+		throw MEException("Invalid Object Index: %d", index.Value);
+	}
+
 	std::string GetObjectName(MEObjectIndex r)
 	{
-		if (r.Value > 0)			return GetNameString(ExportTable.Items[r.Value - 1].ObjectName);
-		else if (r.Value < 0)		return GetNameString(ImportTable.Items[-r.Value - 1].ObjectName);
-		else						return "";
+		if (r.IsNone())			return "";
+		else if (r.IsExport())	return GetNameString(ExportTable.Items[GetObjectNum(r)].ObjectName);
+		else if (r.IsImport())	return GetNameString(ImportTable.Items[GetObjectNum(r)].ObjectName);
+		throw MEException("MEObjectIndex inconsistency");
 	}
 
 	std::string GetObjectPath(MEObjectIndex r);
 
-
 	MEObjectIndex GetSuperClass(MEObjectIndex r)
 	{
-		if (r.Value == 0)
-			return MEObjectIndex(0);
-
-		if (r.Value > 0)
-		{
-			r = ExportTable.Items[r.Value - 1].OuterObject;
-		}
-		else
-		{
-			r = ImportTable.Items[-r.Value - 1].OuterIndex;
-		}
-		return r;
+		if (r.IsNone())			return r;
+		else if (r.IsExport())	return ExportTable.Items[GetObjectNum(r)].OuterObject;
+		else if (r.IsImport())	return ImportTable.Items[GetObjectNum(r)].OuterIndex;
+		throw MEException("MEObjectIndex inconsistency");
 	}
+
+
 
 };
 

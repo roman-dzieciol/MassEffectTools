@@ -3,6 +3,7 @@
 #include "MEPackageGeneration.h"
 #include "MECompressedChunkInfo.h"
 #include "MECompression.h"
+#include "MEFlags.h"
 
 class MEPackageHeader
 {
@@ -13,7 +14,7 @@ public:
 	word		LicenseMode;
 	dword		HeaderSize;
 	MEString	FolderName;
-	dword		PackageFlags;
+	MEFlags<EPackageFlags, dword>		PackageFlags;
 	dword		NameCount;
 	dword		NameOffset;
 	dword		ExportCount;
