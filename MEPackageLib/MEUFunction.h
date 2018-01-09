@@ -1,8 +1,10 @@
 #pragma once
+#include "MEUStruct.h"
 
-class MEUFunction
+class MEUFunction: public MEUStruct
 {
 public:
+	typedef MEUStruct Super;
 
 	word NativeIndex;
 	byte OperatorPrecedence;
@@ -12,12 +14,14 @@ public:
 	MEUFunction();
 	~MEUFunction();
 
-	friend MEArchive& operator << (MEArchive& A, MEUFunction& D)
+
+	virtual void Serialize(MEArchive& A) override
 	{
-		A << D.NativeIndex;
-		A << D.OperatorPrecedence;
-		A << D.Flags;
-		A << D.Name;
-		return A;
+		Super::Serialize(A);
+
+		A << NativeIndex;
+		A << OperatorPrecedence;
+		A << Flags;
+		A << Name;
 	}
 };

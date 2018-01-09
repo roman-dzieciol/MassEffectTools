@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MEPackage.h"
 #include <sstream>
+#include "MEUObject.h"
 
 MEPackage::MEPackage()
 {

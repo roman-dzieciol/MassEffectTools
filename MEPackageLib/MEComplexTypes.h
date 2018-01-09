@@ -184,6 +184,8 @@ public:
 
 class MEExportTableItem {
 public:
+	dword TableIndex;
+
 	MEObjectIndex ClassObject;
 	MEObjectIndex SuperObject;
 	MEObjectIndex OuterObject;
@@ -229,9 +231,11 @@ public:
 
 	friend MEArchive& operator << (MEArchive& A, MEExportTable& D)
 	{
+		dword count = 0;
 		UP_BYTE_MARKER(MEExportTable, A, A.Tell(), BI_ExportTable);
 		for (auto& item : D.Items) {
 			A << item;
+			item.TableIndex = count++;
 		}
 		return A;
 	}

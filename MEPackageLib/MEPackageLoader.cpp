@@ -3,6 +3,7 @@
 #include <iostream>
 #include "MEExporterSQL.h"
 #include "MEFLinker.h"
+#include "MEUObject.h"
 
 MEPackageLoader::MEPackageLoader()
 {
@@ -13,25 +14,45 @@ MEPackageLoader::~MEPackageLoader()
 {
 }
 
-void LoadObjects(MEFileArchive& A, MEPackage& D) {
+void MEPackageLoader::LoadObjects(MEFileArchive& A, MEPackage& D) {
 
 	for (auto& exportItem : D.ExportTable.Items) {
-		A.Seek(exportItem.SerialOffset);
-		UP_OFFSET_GUARD(object, A, exportItem.SerialOffset, exportItem.SerialOffset + exportItem.SerialSize);
-		UP_BYTE_MARKER(object, A, A.Tell(), BI_Object);
-		A.Serialize(nullptr, exportItem.SerialSize);
+		try
+		{
+			A.Seek(exportItem.SerialOffset);
+			UP_OFFSET_GUARD(object, A, exportItem.SerialOffset, exportItem.SerialOffset + exportItem.SerialSize);
+			UP_BYTE_MARKER(object, A, A.Tell(), BI_Object);
+
+
+			auto className = D.GetObjectName(exportItem.ClassObject);
+			auto object = ObjectFactory.ConstructByClassName(className);
+			if (object) {
+				object->Serialize(A);
+				D.ExportObjects.push_back(std::move(object));
+			}
+			else {
+				A.Serialize(nullptr, exportItem.SerialSize);
+			}
+
+			int readMismatch = A.Tell() - (exportItem.SerialOffset + exportItem.SerialSize);
+			if (readMismatch != 0) {
+				throw MEException("Mismatch reading object:%s index:0x%x offset:0x%x bytes:%d", className.c_str(), exportItem.TableIndex, exportItem.SerialOffset, readMismatch);
+			}
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << MEFormat("Error reading object index:0x%x offset:0x%x", exportItem.TableIndex, exportItem.SerialOffset) << std::endl;
+			std::cerr << "Exception: " << e.what() << std::endl;
+		}
 	}
 }
 
-void DumpPackage(MEFileArchive& A, MEPackage& D, fs::path path) {
-	for (int i = 0; i != D.ExportTable.Items.size(); ++i) {
-		auto& item = D.ExportTable.Items[i];
-		std::cout << D.GetObjectPath(MEObjectIndex(i + 1)) << std::endl;
-	}
+void MEPackageLoader::DumpPackage(MEFileArchive& A, MEPackage& D, fs::path path) {
+
 
 	// Dump byte info
-	auto byteInfo = A.DumpByteInfo();
-	std::cout << byteInfo << std::endl;
+	//auto byteInfo = A.DumpByteInfo();
+	//std::cout << byteInfo << std::endl;
 
 
 	// Dump SQL

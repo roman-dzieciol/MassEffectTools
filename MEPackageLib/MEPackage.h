@@ -4,6 +4,9 @@
 #include "MEPackage.h"
 #include "MEPackageHeader.h"
 #include "MEComplexTypes.h"
+#include <functional>
+
+class MEUObject;
 
 class MEPackage
 {
@@ -18,6 +21,7 @@ public:
 	MEExportTable ExportTable;
 
 	std::vector< std::vector<byte> > RawObjects;
+	std::vector<std::unique_ptr<MEUObject>> ExportObjects;
 
 	MEPackage();
 	~MEPackage();

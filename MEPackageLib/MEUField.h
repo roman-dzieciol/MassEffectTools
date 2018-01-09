@@ -5,16 +5,17 @@
 class MEUField : public MEUObject
 {
 public:
+	typedef MEUObject Super;
+
 	MEObjectIndex Next;
 
 	MEUField();
 	~MEUField();
 
 
-	friend MEArchive& operator << (MEArchive& A, MEUField& D)
+	virtual void Serialize(MEArchive& A) override
 	{
-		A << static_cast<MEUObject&>(D);
-		A << D.Next;
-		return A;
+		Super::Serialize(A);
+		A << Next;
 	}
 };

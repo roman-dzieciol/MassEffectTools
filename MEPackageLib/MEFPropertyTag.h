@@ -15,7 +15,7 @@ public:
 	{
 		A << D.Type;
 		if (D.Type.Name.Value != 0) {
-			throw MENotImplemented();
+			//throw MENotImplemented();
 		}
 		return A;
 	}

@@ -7,11 +7,15 @@ public:
 	//MEFName UnkName; // None for function
 
 	MEUObject();
-	~MEUObject();
+	virtual ~MEUObject();
+
+	virtual void Serialize(MEArchive& A) {
+
+	}
 
 	friend MEArchive& operator << (MEArchive& A, MEUObject& D)
 	{
 		//A << D.NetIndex;
-		return A;
+		D.Serialize(A);
 	}
 };

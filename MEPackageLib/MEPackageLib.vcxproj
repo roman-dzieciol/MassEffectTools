@@ -175,6 +175,7 @@
     <ClInclude Include="MEFName.h" />
     <ClInclude Include="MEFPropertyTag.h" />
     <ClInclude Include="MENameTableIndex.h" />
+    <ClInclude Include="MEObjectFactory.h" />
     <ClInclude Include="MEObjectIndex.h" />
     <ClInclude Include="MEPackage.h" />
     <ClInclude Include="MEPackageGeneration.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="MEFName.cpp" />
     <ClCompile Include="MEFPropertyTag.cpp" />
     <ClCompile Include="MENameTableIndex.cpp" />
+    <ClCompile Include="MEObjectFactory.cpp" />
     <ClCompile Include="MEObjectIndex.cpp" />
     <ClCompile Include="MEPackage.cpp" />
     <ClCompile Include="MEPackageGeneration.cpp" />
