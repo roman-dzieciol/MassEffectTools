@@ -23,5 +23,7 @@ typedef const char*			cstr;
 
 typedef dword MEObjectNum;
 
+typedef dword MENativeFuncIndex;
+
 
 class MEFLinker;

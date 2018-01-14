@@ -182,6 +182,10 @@
     <ClInclude Include="MEPackageHeader.h" />
     <ClInclude Include="MEPackageLib.h" />
     <ClInclude Include="MEPackageLoader.h" />
+    <ClInclude Include="MEScript.h" />
+    <ClInclude Include="METoken.h" />
+    <ClInclude Include="METokenFactory.h" />
+    <ClInclude Include="METokens.h" />
     <ClInclude Include="MEUField.h" />
     <ClInclude Include="MEUFunction.h" />
     <ClInclude Include="MEUObject.h" />
@@ -210,6 +214,10 @@
     <ClCompile Include="MEPackageGeneration.cpp" />
     <ClCompile Include="MEPackageHeader.cpp" />
     <ClCompile Include="MEPackageLoader.cpp" />
+    <ClCompile Include="MEScript.cpp" />
+    <ClCompile Include="METoken.cpp" />
+    <ClCompile Include="METokenFactory.cpp" />
+    <ClCompile Include="METokens.cpp" />
     <ClCompile Include="MEUField.cpp" />
     <ClCompile Include="MEUFunction.cpp" />
     <ClCompile Include="MEUObject.cpp" />

@@ -108,6 +108,18 @@
     <ClInclude Include="MEObjectFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MEScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="METoken.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="METokens.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="METokenFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -180,6 +192,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MEObjectFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MEScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="METoken.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="METokens.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="METokenFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

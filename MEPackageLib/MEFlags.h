@@ -14,12 +14,20 @@ public:
 		{
 			std::underlying_type_t<T> testFlag = 1;
 			testFlag <<= i;
-			if ((Value & testFlag) == testFlag) {
+			if (is(testFlag)) {
 				result << StringFromEnum(T(testFlag));
 				result << ",";
 			}
 		}
 		return result.str();
+	}
+
+	bool is(T Flag) {
+		return is((std::underlying_type_t<T>)Flag);
+	}
+
+	bool is(std::underlying_type_t<T> FlagValue) {
+		return (Value & FlagValue) == FlagValue;
 	}
 };
 

@@ -87,6 +87,7 @@ public:
 public:
 	virtual std::string		DebugInfo() const = 0;
 	virtual std::string		DumpByteInfo() const = 0;
+	virtual std::string		GetOffsetText() const { return MEFormat("0x%0.8x", Tell()); }
 
 public:
 	friend MEArchive& operator << (MEArchive& A, qword& D) { A.Serialize(&D, sizeof(qword)); return A; /*wxUINT64_SWAP_ON_?E(D);*/ }

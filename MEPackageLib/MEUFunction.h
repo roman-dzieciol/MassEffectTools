@@ -15,13 +15,5 @@ public:
 	~MEUFunction();
 
 
-	virtual void Serialize(MEArchive& A) override
-	{
-		Super::Serialize(A);
-
-		A << NativeIndex;
-		A << OperatorPrecedence;
-		A << Flags;
-		A << Name;
-	}
+	virtual void Serialize(MEArchive& A) override;
 };

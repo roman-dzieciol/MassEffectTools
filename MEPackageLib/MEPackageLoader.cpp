@@ -27,6 +27,8 @@ void MEPackageLoader::LoadObjects(MEFileArchive& A, MEPackage& D) {
 			auto className = D.GetObjectName(exportItem.ClassObject);
 			auto object = ObjectFactory.ConstructByClassName(className);
 			if (object) {
+				object->_TableIndex = exportItem.TableIndex;
+				object->_Name = D.GetObjectName(MEObjectIndex::FromExportIndex(exportItem.TableIndex));
 				object->Serialize(A);
 				D.ExportObjects.push_back(std::move(object));
 			}
@@ -45,6 +47,8 @@ void MEPackageLoader::LoadObjects(MEFileArchive& A, MEPackage& D) {
 			std::cerr << "Exception: " << e.what() << std::endl;
 		}
 	}
+
+	A.GetLinker()->LoadScripts(A);
 }
 
 void MEPackageLoader::DumpPackage(MEFileArchive& A, MEPackage& D, fs::path path) {

@@ -32,8 +32,12 @@ void MEUStruct::Serialize(MEArchive& A)
 	A << unk5;
 	A << ScriptSize;
 	if (ScriptSize > 0) {
+		ScriptOffset = A.Tell();
 		ByteCode.reserve(ScriptSize);
 		ByteCode.resize(ScriptSize);
 		A.Serialize(&ByteCode[0], ScriptSize);
+	}
+	else {
+		ScriptOffset = 0;
 	}
 }

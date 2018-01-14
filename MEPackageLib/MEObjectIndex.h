@@ -6,6 +6,14 @@ public:
 
 	explicit MEObjectIndex(int32 value = 0) : Value(value) {}
 
+	static MEObjectIndex FromExportIndex(dword value) {
+		return MEObjectIndex(value + 1);
+	}
+
+	static MEObjectIndex FromImportIndex(dword value) {
+		return MEObjectIndex(-(int32)value - 1);
+	}
+
 	bool IsExport() const { return Value > 0; }
 	bool IsImport() const { return Value < 0; }
 	bool IsNone() const { return Value == 0; }

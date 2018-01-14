@@ -3,6 +3,8 @@
 #include "MEUField.h"
 #include "MEFPropertyTag.h"
 
+class METoken;
+
 class MEUStruct : public MEUField
 {
 public:
@@ -17,7 +19,12 @@ public:
 	dword unk4; //
 	dword unk5; //
 	dword ScriptSize; //
+
+
 	std::vector<byte> ByteCode;
+	bool isScriptLoaded = false;
+	dword ScriptOffset;
+	std::vector<std::unique_ptr<METoken>> ScriptTokens;
 
 	MEUStruct();
 	~MEUStruct();
