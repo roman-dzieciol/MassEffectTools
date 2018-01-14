@@ -96,7 +96,7 @@ std::unique_ptr<METoken> MEScript::ParseToken(byte code, MEArchive& A, MEScriptC
 	{
 		byte funcCode2 = 0;
 		A << funcCode2;
-		return ParseFunc(funcCode2, A, Context);
+		return ParseCode(code, A, Context);
 	}
 
 	//if (code >= (byte)MEExprToken::EX_FirstNative) {
