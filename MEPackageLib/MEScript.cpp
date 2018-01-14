@@ -31,16 +31,16 @@ MEScript::~MEScript()
 }
 
 
-std::unique_ptr<METoken> MEScript::ParseCode(byte code, MEArchive& A)
+std::unique_ptr<METoken> MEScript::ParseCode(byte code, MEArchive& A, MEScriptContext& Context)
 {
-	auto indenter = Indenter(_Indent);
+	auto indenter = Indenter(Context.Depth);
 	PrintOffsetInfo(MEFormat("0x%X %s"
 		, (dword)code
 		, StringFromEnum((MEExprToken)code).c_str()
-	), A);
+	), A, Context);
 	auto token = factory.ConstructByCode((MEExprToken)code);
 	if (token) {
-		token->Parse(A, *this);
+		token->Parse(A, *this, Context);
 		return token;
 	}
 	else {
@@ -48,26 +48,26 @@ std::unique_ptr<METoken> MEScript::ParseCode(byte code, MEArchive& A)
 	}
 }
 
-std::unique_ptr<METoken> MEScript::ParseFunc(MENativeFuncIndex code, MEArchive& A)
+std::unique_ptr<METoken> MEScript::ParseFunc(MENativeFuncIndex funcCode, MEArchive& A, MEScriptContext& Context)
 {
-	auto indenter = Indenter(_Indent);
-	auto func = A.GetLinker()->GetNativeFunc(code);
+	auto indenter = Indenter(Context.Depth);
+	auto func = A.GetLinker()->GetNativeFunc(funcCode);
 	PrintOffsetInfo(MEFormat("0x%X %s"
-		, (dword)code
+		, (dword)funcCode
 		, func->GetObjectName().c_str()
-	), A);
+	), A, Context);
 	std::unique_ptr<METoken> nativeFuncToken = std::make_unique<MENativeFuncToken>(func);
-	nativeFuncToken->Parse(A, *this);
+	nativeFuncToken->Parse(A, *this, Context);
 	return nativeFuncToken;
 }
 
-std::vector<std::unique_ptr<METoken>> MEScript::ParseFuncArgs(MEArchive& A)
+std::vector<std::unique_ptr<METoken>> MEScript::ParseFuncArgs(MEArchive& A, MEScriptContext& Context)
 {
-	auto indenter = Indenter(_Indent);
+	auto indenter = Indenter(Context.Depth);
 	std::vector<std::unique_ptr<METoken>> tokens;
 	while (true)
 	{
-		auto token = ParseToken(A);
+		auto token = ParseToken(A, Context);
 		auto code = token->GetCode();
 		tokens.push_back(std::move(token));
 		if (code == MEExprToken::EX_EndFunctionParms) {
@@ -78,47 +78,48 @@ std::vector<std::unique_ptr<METoken>> MEScript::ParseFuncArgs(MEArchive& A)
 }
 
 
-std::unique_ptr<METoken> MEScript::ParseToken(MEArchive& A)
+std::unique_ptr<METoken> MEScript::ParseToken(MEArchive& A, MEScriptContext& Context)
 {
 	byte code = 0;
 	A << code;
-	return ParseToken(code, A);
+	return ParseToken(code, A, Context);
 
 }
 
-std::unique_ptr<METoken> MEScript::ParseToken(byte code, MEArchive& A)
+std::unique_ptr<METoken> MEScript::ParseToken(byte code, MEArchive& A, MEScriptContext& Context)
 {
-	if (code >= (byte)MEExprToken::EX_Extended) {
+	if (code >= (byte)MEExprToken::EX_FirstNative) {
 		dword funcCode = code;
-		if ((funcCode & 0xF0) == (byte)MEExprToken::EX_Extended) {
+		if ((funcCode & 0xF0) == (byte)MEExprToken::EX_ExtendedNative) {
 			byte funcCode2 = 0;
 			A << funcCode2;
 			funcCode = ((funcCode - (dword)funcCode2) << 8) + (dword)funcCode2;
 		}
-		return ParseFunc(funcCode, A);
+		return ParseFunc(funcCode, A, Context);
 	}
 	else {
-		return ParseCode(code, A);
+		return ParseCode(code, A, Context);
 	}
 }
 
-void MEScript::PrintOffsetInfo(std::string Info, MEArchive& A)
+void MEScript::PrintOffsetInfo(std::string Info, MEArchive& A, MEScriptContext& Context)
 {
-	std::cout << MEFormat("%s[%0.2x] %s%s"
+	std::cout << MEFormat("%s[%0.4x][%0.2x] %s%s"
 		, A.GetOffsetText().c_str()
-		, _Indent
-		, std::string(_Indent, ' ').c_str()
+		, A.Tell() - Context.ScriptOffset
+		, Context.Depth
+		, std::string(Context.Depth, ' ').c_str()
 		, Info.c_str()
 	) << std::endl;
 }
 
-std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A)
+std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A, MEScriptContext& Context)
 {
 	std::vector<std::unique_ptr<METoken>> result;
 	byte code = 0;
 	A << code;
-	while (code != (byte)MEExprToken::EX_End) {
-		auto token = ParseToken(code, A);
+	while (code != (byte)MEExprToken::EX_EndOfScript) {
+		auto token = ParseToken(code, A, Context);
 		if (token) {
 			result.push_back(std::move(token));
 		}
@@ -481,14 +482,14 @@ std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A)
 		break;
 		}
 
-		case 0x3a:	// EX_3a
+		case 0x3a:	// EX_ReturnNothing
 		{
-			RB_TOKEN_NAME("EX_3a");
+			RB_TOKEN_NAME("EX_ReturnNothing");
 			RB_TOKEN_DESC("");
 
 			RB_LOAD_DATA(dword, value);
 
-			output = wxString::Format(wxT("EX_3a %d %s"), value, PF_SAFESTR(Pkg.GetObjectName(value)));
+			output = wxString::Format(wxT("EX_ReturnNothing %d %s"), value, PF_SAFESTR(Pkg.GetObjectName(value)));
 			PrintOutput(output);
 			RB_ADD_TOKEN;
 			break;
@@ -535,7 +536,7 @@ std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A)
 		break;
 		}
 
-		case MEExprToken::EX_TernaryIf: // 0x45 ""
+		case MEExprToken::EX_Conditional: // 0x45 ""
 		{	output = name;
 		RB_ADD_TOKEN;
 
@@ -579,7 +580,7 @@ std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A)
 			break;
 		}
 
-		case MEExprToken::EX_OutParameter: // 0x48 ""
+		case MEExprToken::EX_LocalOutVariable: // 0x48 ""
 		{	RB_LOAD_DATA(dword, value);
 		output = wxString::Format(wxT("%s"), PF_SAFESTR(Pkg.GetObjectName(value)));
 		RB_ADD_TOKEN;
@@ -587,7 +588,7 @@ std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A)
 		break;
 		}
 
-		case MEExprToken::EX_OptionalParamDefaults: // 0x49 ""
+		case MEExprToken::EX_DefaultParmValue: // 0x49 ""
 		{	RB_LOAD_DATA(word, value);
 		RB_ADD_TOKEN;
 		RB_LOAD_TOKEN;
@@ -604,13 +605,13 @@ std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A)
 			break;
 		}
 
-		case MEExprToken::EX_InterfaceToken: // 0x51 "0x51"
+		case MEExprToken::EX_InterfaceContext: // 0x51 "0x51"
 		{	RB_ADD_TOKEN;
 		RB_LOAD_TOKEN;
 		break;
 		}
 
-		case MEExprToken::EX_InterfaceStuff: // 0x52 "0x52"
+		case MEExprToken::EX_InterfaceCast: // 0x52 "0x52"
 		{	RB_LOAD_DATA(dword, value);
 		output = wxString::Format(wxT("%s"), PF_SAFESTR(Pkg.GetNameString(value)));
 		RB_ADD_TOKEN;
@@ -619,7 +620,7 @@ std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A)
 		}
 
 
-		case MEExprToken::EX_End: // 0x53 "End of script"
+		case MEExprToken::EX_EndOfScript: // 0x53 "End of script"
 		{	t->SetFlag(TF_SkipPostOutput);
 		RB_ADD_TOKEN;
 		break;

@@ -5,6 +5,12 @@
 
 class METoken;
 
+class MEScriptContext {
+public:
+	dword Depth = 0;
+	dword ScriptOffset;
+	dword ScriptSize;
+};
 
 class MEScript
 {
@@ -13,15 +19,14 @@ public:
 	~MEScript();
 
 	METokenFactory factory;
-	dword _Indent = 0;
 
-	std::vector<std::unique_ptr<METoken>> ParseUntilEnd(MEArchive& A);
-	std::unique_ptr<METoken> ParseCode(byte code, MEArchive& A);
-	std::unique_ptr<METoken> ParseFunc(MENativeFuncIndex funcCode, MEArchive& A);
-	std::vector<std::unique_ptr<METoken>> ParseFuncArgs(MEArchive& A);
-	std::unique_ptr<METoken> ParseToken(byte code, MEArchive& A);
-	std::unique_ptr<METoken> ParseToken(MEArchive& A);
+	std::vector<std::unique_ptr<METoken>> ParseUntilEnd(MEArchive& A, MEScriptContext& Context);
+	std::unique_ptr<METoken> ParseCode(byte code, MEArchive& A, MEScriptContext& Context);
+	std::unique_ptr<METoken> ParseFunc(MENativeFuncIndex funcCode, MEArchive& A, MEScriptContext& Context);
+	std::vector<std::unique_ptr<METoken>> ParseFuncArgs(MEArchive& A, MEScriptContext& Context);
+	std::unique_ptr<METoken> ParseToken(byte code, MEArchive& A, MEScriptContext& Context);
+	std::unique_ptr<METoken> ParseToken(MEArchive& A, MEScriptContext& Context);
 
-	void PrintOffsetInfo(std::string Info, MEArchive& A);
+	void PrintOffsetInfo(std::string Info, MEArchive& A, MEScriptContext& Context);
 };
 

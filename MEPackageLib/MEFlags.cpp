@@ -293,21 +293,22 @@ std::string StringFromEnum(EObjectFlags flag) {
 
 std::string StringFromEnum(EFunctionFlags flag) {
 	switch (flag) {
-	case EFunctionFlags::FUNC_None: return "None";
 	case EFunctionFlags::FUNC_Final: return "Final";
-	case EFunctionFlags::FUNC_RequiredAPI: return "RequiredAPI";
-	case EFunctionFlags::FUNC_BlueprintAuthorityOnly: return "BlueprintAuthorityOnly";
-	case EFunctionFlags::FUNC_BlueprintCosmetic: return "BlueprintCosmetic";
+	case EFunctionFlags::FUNC_Defined: return "Defined";
+	case EFunctionFlags::FUNC_Iterator: return "Iterator";
+	case EFunctionFlags::FUNC_Latent: return "Latent";
+	case EFunctionFlags::FUNC_PreOperator: return "PreOperator";
+	case EFunctionFlags::FUNC_Singular: return "Singular";
 	case EFunctionFlags::FUNC_Net: return "Net";
 	case EFunctionFlags::FUNC_NetReliable: return "NetReliable";
-	case EFunctionFlags::FUNC_NetRequest: return "NetRequest";
+	case EFunctionFlags::FUNC_Simulated: return "Simulated";
 	case EFunctionFlags::FUNC_Exec: return "Exec";
 	case EFunctionFlags::FUNC_Native: return "Native";
 	case EFunctionFlags::FUNC_Event: return "Event";
-	case EFunctionFlags::FUNC_NetResponse: return "NetResponse";
+	case EFunctionFlags::FUNC_Operator: return "Operator";
 	case EFunctionFlags::FUNC_Static: return "Static";
-	case EFunctionFlags::FUNC_NetMulticast: return "NetMulticast";
-	case EFunctionFlags::FUNC_MulticastDelegate: return "MulticastDelegate";
+	case EFunctionFlags::FUNC_HasOptionalParms: return "HasOptionalParms";
+	case EFunctionFlags::FUNC_Const: return "Const";
 	case EFunctionFlags::FUNC_Public: return "Public";
 	case EFunctionFlags::FUNC_Private: return "Private";
 	case EFunctionFlags::FUNC_Protected: return "Protected";
@@ -317,12 +318,55 @@ std::string StringFromEnum(EFunctionFlags flag) {
 	case EFunctionFlags::FUNC_HasDefaults: return "HasDefaults";
 	case EFunctionFlags::FUNC_NetClient: return "NetClient";
 	case EFunctionFlags::FUNC_DLLImport: return "DLLImport";
-	case EFunctionFlags::FUNC_BlueprintCallable: return "BlueprintCallable";
-	case EFunctionFlags::FUNC_BlueprintEvent: return "BlueprintEvent";
-	case EFunctionFlags::FUNC_BlueprintPure: return "BlueprintPure";
-	case EFunctionFlags::FUNC_EditorOnly: return "EditorOnly";
-	case EFunctionFlags::FUNC_Const: return "Const";
-	case EFunctionFlags::FUNC_NetValidate: return "NetValidate";
+	case EFunctionFlags::FUNC_K2Call: return "K2Call";
+	case EFunctionFlags::FUNC_K2Override: return "K2Override";
+	case EFunctionFlags::FUNC_K2Pure: return "K2Pure";
+	}
+	return MEFormat("0x%x", (dword)flag);
+}
+
+std::string StringFromEnum(ECastToken flag) {
+	switch (flag) {
+	case ECastToken::CST_InterfaceToObject: return "CST_InterfaceToObject";
+	case ECastToken::CST_InterfaceToString: return "CST_InterfaceToString";
+	case ECastToken::CST_InterfaceToBool: return "CST_InterfaceToBool";
+	case ECastToken::CST_RotatorToVector: return "CST_RotatorToVector";
+	case ECastToken::CST_ByteToInt: return "CST_ByteToInt";
+	case ECastToken::CST_ByteToBool: return "CST_ByteToBool";
+	case ECastToken::CST_ByteToFloat: return "CST_ByteToFloat";
+	case ECastToken::CST_IntToByte: return "CST_IntToByte";
+	case ECastToken::CST_IntToBool: return "CST_IntToBool";
+	case ECastToken::CST_IntToFloat: return "CST_IntToFloat";
+	case ECastToken::CST_BoolToByte: return "CST_BoolToByte";
+	case ECastToken::CST_BoolToInt: return "CST_BoolToInt";
+	case ECastToken::CST_BoolToFloat: return "CST_BoolToFloat";
+	case ECastToken::CST_FloatToByte: return "CST_FloatToByte";
+	case ECastToken::CST_FloatToInt: return "CST_FloatToInt";
+	case ECastToken::CST_FloatToBool: return "CST_FloatToBool";
+	case ECastToken::CST_ObjectToInterface: return "CST_ObjectToInterface";
+	case ECastToken::CST_ObjectToBool: return "CST_ObjectToBool";
+	case ECastToken::CST_NameToBool: return "CST_NameToBool";
+	case ECastToken::CST_StringToByte: return "CST_StringToByte";
+	case ECastToken::CST_StringToInt: return "CST_StringToInt";
+	case ECastToken::CST_StringToBool: return "CST_StringToBool";
+	case ECastToken::CST_StringToFloat: return "CST_StringToFloat";
+	case ECastToken::CST_StringToVector: return "CST_StringToVector";
+	case ECastToken::CST_StringToRotator: return "CST_StringToRotator";
+	case ECastToken::CST_VectorToBool: return "CST_VectorToBool";
+	case ECastToken::CST_VectorToRotator: return "CST_VectorToRotator";
+	case ECastToken::CST_RotatorToBool: return "CST_RotatorToBool";
+	case ECastToken::CST_ByteToString: return "CST_ByteToString";
+	case ECastToken::CST_IntToString: return "CST_IntToString";
+	case ECastToken::CST_BoolToString: return "CST_BoolToString";
+	case ECastToken::CST_FloatToString: return "CST_FloatToString";
+	case ECastToken::CST_ObjectToString: return "CST_ObjectToString";
+	case ECastToken::CST_NameToString: return "CST_NameToString";
+	case ECastToken::CST_VectorToString: return "CST_VectorToString";
+	case ECastToken::CST_RotatorToString: return "CST_RotatorToString";
+	case ECastToken::CST_DelegateToString: return "CST_DelegateToString";
+	case ECastToken::CST_StringToDelegate: return "CST_StringToDelegate";
+	case ECastToken::CST_StringToName: return "CST_StringToName";
+	case ECastToken::CST_Max: return "CST_Max";
 	}
 	return MEFormat("0x%x", (dword)flag);
 }

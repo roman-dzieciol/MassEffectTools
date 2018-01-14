@@ -43,7 +43,7 @@ void METokenFactory::RegisterAll()
 	RegisterToken(MEExprToken::EX_Nothing, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_Nothing>(); });
 	RegisterToken(MEExprToken::EX_LabelTable, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_LabelTable>(); });
 	RegisterToken(MEExprToken::EX_GotoLabel, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_GotoLabel>(); });
-	RegisterToken(MEExprToken::EX_EatReturn, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_EatReturn>(); });
+	RegisterToken(MEExprToken::EX_EatReturnValue, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_EatReturnValue>(); });
 	RegisterToken(MEExprToken::EX_Let, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_Let>(); });
 	RegisterToken(MEExprToken::EX_DynArrayElement, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_DynArrayElement>(); });
 	RegisterToken(MEExprToken::EX_New, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_New>(); });
@@ -86,18 +86,36 @@ void METokenFactory::RegisterAll()
 	RegisterToken(MEExprToken::EX_GlobalFunction, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_GlobalFunction>(); });
 	RegisterToken(MEExprToken::EX_PrimitiveCast, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_PrimitiveCast>(); });
 	RegisterToken(MEExprToken::EX_DynArrayInsert, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_DynArrayInsert>(); });
-	RegisterToken(MEExprToken::EX_3a, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_3a>(); });
+	RegisterToken(MEExprToken::EX_ReturnNothing, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_ReturnNothing>(); });
 	RegisterToken(MEExprToken::EX_DynArrayRemove, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_DynArrayRemove>(); });
 	RegisterToken(MEExprToken::EX_DelegateFunction, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_DelegateFunction>(); });
 	RegisterToken(MEExprToken::EX_DelegateProperty, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_DelegateProperty>(); });
 	RegisterToken(MEExprToken::EX_LetDelegate, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_LetDelegate>(); });
-	RegisterToken(MEExprToken::EX_TernaryIf, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_TernaryIf>(); });
-	RegisterToken(MEExprToken::EX_46, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_46>(); });
-	RegisterToken(MEExprToken::EX_47, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_47>(); });
-	RegisterToken(MEExprToken::EX_OutParameter, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_OutParameter>(); });
-	RegisterToken(MEExprToken::EX_OptionalParamDefaults, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_OptionalParamDefaults>(); });
-	RegisterToken(MEExprToken::EX__SkipOptionalParam, []()->std::unique_ptr<METoken> { return std::make_unique<EX__SkipOptionalParam>(); });
-	RegisterToken(MEExprToken::EX_InterfaceToken, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_InterfaceToken>(); });
-	RegisterToken(MEExprToken::EX_InterfaceStuff, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_InterfaceStuff>(); });
-	RegisterToken(MEExprToken::EX_End, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_End>(); });
+	RegisterToken(MEExprToken::EX_Conditional, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_Conditional>(); });
+	RegisterToken(MEExprToken::EX_DynArrayFind, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_DynArrayFind>(); });
+	RegisterToken(MEExprToken::EX_DynArrayFindStruct, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_DynArrayFindStruct>(); });
+	RegisterToken(MEExprToken::EX_LocalOutVariable, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_LocalOutVariable>(); });
+	RegisterToken(MEExprToken::EX_DefaultParmValue, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_DefaultParmValue>(); });
+	RegisterToken(MEExprToken::EX_EmptyParmValue, []()->std::unique_ptr<METoken> { return std::make_unique<EX_EmptyParmValue>(); });
+	RegisterToken(MEExprToken::EX_InterfaceContext, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_InterfaceContext>(); });
+	RegisterToken(MEExprToken::EX_InterfaceCast, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_InterfaceCast>(); });
+	RegisterToken(MEExprToken::EX_EndOfScript, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_EndOfScript>(); });
+
+
+	RegisterToken(MEExprToken::EX_HighNative_60, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_60); });
+	RegisterToken(MEExprToken::EX_HighNative_61, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_61); });
+	RegisterToken(MEExprToken::EX_HighNative_62, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_62); });
+	RegisterToken(MEExprToken::EX_HighNative_63, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_63); });
+	RegisterToken(MEExprToken::EX_HighNative_64, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_64); });
+	RegisterToken(MEExprToken::EX_HighNative_65, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_65); });
+	RegisterToken(MEExprToken::EX_HighNative_66, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_66); });
+	RegisterToken(MEExprToken::EX_HighNative_67, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_67); });
+	RegisterToken(MEExprToken::EX_HighNative_68, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_68); });
+	RegisterToken(MEExprToken::EX_HighNative_69, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_69); });
+	RegisterToken(MEExprToken::EX_HighNative_6a, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_6a); });
+	RegisterToken(MEExprToken::EX_HighNative_6b, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_6b); });
+	RegisterToken(MEExprToken::EX_HighNative_6c, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_6c); });
+	RegisterToken(MEExprToken::EX_HighNative_6d, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_6d); });
+	RegisterToken(MEExprToken::EX_HighNative_6e, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_6e); });
+	RegisterToken(MEExprToken::EX_HighNative_6f, []()->std::unique_ptr<METoken> { return std::make_unique<ME_EX_HighNative>(MEExprToken::EX_HighNative_6f); });
 }

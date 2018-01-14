@@ -377,40 +377,87 @@ enum class EObjectFlags : qword
 
 extern std::string StringFromEnum(EObjectFlags flag);
 
-enum class EFunctionFlags: dword {
+enum class EFunctionFlags : dword {
 
 	// Function flags.
-	FUNC_None = 0x00000000,
-
-	FUNC_Final = 0x00000001,	// Function is final (prebindable, non-overridable function).
-	FUNC_RequiredAPI = 0x00000002,	// Indicates this function is DLL exported/imported.
-	FUNC_BlueprintAuthorityOnly = 0x00000004,   // Function will only run if the object has network authority
-	FUNC_BlueprintCosmetic = 0x00000008,   // Function is cosmetic in nature and should not be invoked on dedicated servers
+	FUNC_Final = 0x00000001,   // Function is final (prebindable, non-overridable function).
+	FUNC_Defined = 0x00000002,   // Function has been defined (not just declared).
+	FUNC_Iterator = 0x00000004,   // Function is an iterator.
+	FUNC_Latent = 0x00000008,   // Function is a latent state function.
+	FUNC_PreOperator = 0x00000010,   // Unary operator is a prefix operator.
+	FUNC_Singular = 0x00000020,   // Function cannot be reentered.
 	FUNC_Net = 0x00000040,   // Function is network-replicated.
 	FUNC_NetReliable = 0x00000080,   // Function should be sent reliably on the network.
-	FUNC_NetRequest = 0x00000100,	// Function is sent to a net service
-	FUNC_Exec = 0x00000200,	// Executable from command line.
-	FUNC_Native = 0x00000400,	// Native function.
+	FUNC_Simulated = 0x00000100,   // Function executed on the client side.
+	FUNC_Exec = 0x00000200,   // Executable from command line.
+	FUNC_Native = 0x00000400,   // Native function.
 	FUNC_Event = 0x00000800,   // Event function.
-	FUNC_NetResponse = 0x00001000,   // Function response from a net service
+	FUNC_Operator = 0x00001000,   // Operator function.
 	FUNC_Static = 0x00002000,   // Static function.
-	FUNC_NetMulticast = 0x00004000,	// Function is networked multicast Server -> All Clients
-	FUNC_MulticastDelegate = 0x00010000,	// Function is a multi-cast delegate signature (also requires FUNC_Delegate to be set!)
-	FUNC_Public = 0x00020000,	// Function is accessible in all classes (if overridden, parameters must remain unchanged).
-	FUNC_Private = 0x00040000,	// Function is accessible only in the class it is defined in (cannot be overridden, but function name may be reused in subclasses.  IOW: if overridden, parameters don't need to match, and Super.Func() cannot be accessed since it's private.)
-	FUNC_Protected = 0x00080000,	// Function is accessible only in the class it is defined in and subclasses (if overridden, parameters much remain unchanged).
-	FUNC_Delegate = 0x00100000,	// Function is delegate signature (either single-cast or multi-cast, depending on whether FUNC_MulticastDelegate is set.)
-	FUNC_NetServer = 0x00200000,	// Function is executed on servers (set by replication code if passes check)
-	FUNC_HasOutParms = 0x00400000,	// function has out (pass by reference) parameters
-	FUNC_HasDefaults = 0x00800000,	// function has structs that contain defaults
-	FUNC_NetClient = 0x01000000,	// function is executed on clients
-	FUNC_DLLImport = 0x02000000,	// function is imported from a DLL
-	FUNC_BlueprintCallable = 0x04000000,	// function can be called from blueprint code
-	FUNC_BlueprintEvent = 0x08000000,	// function can be overridden/implemented from a blueprint
-	FUNC_BlueprintPure = 0x10000000,	// function can be called from blueprint code, and is also pure (produces no side effects). If you set this, you should set FUNC_BlueprintCallable as well.
-	FUNC_EditorOnly = 0x20000000,	// function can only be called from an editor scrippt.
-	FUNC_Const = 0x40000000,	// function can be called from blueprint code, and only reads state (never writes state)
-	FUNC_NetValidate = 0x80000000,	// function must supply a _Validate implementation
+	FUNC_HasOptionalParms = 0x00004000,   // Function has optional parameters
+	FUNC_Const = 0x00008000,   // Function doesn't modify this object.
+
+	FUNC_Public = 0x00020000,   // Function is accessible in all classes (if overridden, parameters much remain unchanged).
+	FUNC_Private = 0x00040000,   // Function is accessible only in the class it is defined in (cannot be overriden, but function name may be reused in subclasses.  IOW: if overridden, parameters don't need to match, and Super.Func() cannot be accessed since it's private.)
+	FUNC_Protected = 0x00080000,   // Function is accessible only in the class it is defined in and subclasses (if overridden, parameters much remain unchanged).
+	FUNC_Delegate = 0x00100000,   // Function is actually a delegate.
+	FUNC_NetServer = 0x00200000,   // Function is executed on servers (set by replication code if passes check)
+	FUNC_HasOutParms = 0x00400000,   // function has out (pass by reference) parameters
+	FUNC_HasDefaults = 0x00800000,   // function has structs that contain defaults
+	FUNC_NetClient = 0x01000000,   // function is executed on clients
+	FUNC_DLLImport = 0x02000000,   // function is imported from a DLL
+	FUNC_K2Call = 0x04000000,   // function can be called from K2
+	FUNC_K2Override = 0x08000000,   // function can be overriden/implemented from K2
+	FUNC_K2Pure = 0x10000000,   // function can be called from K2, and is also pure (produces no side effects). If you set this, you should set K2call as well.
+
+	FUNC_FuncInherit = FUNC_Exec | FUNC_Event,
+	FUNC_FuncOverrideMatch = FUNC_Exec | FUNC_Final | FUNC_Latent | FUNC_PreOperator | FUNC_Iterator | FUNC_Static | FUNC_Public | FUNC_Protected | FUNC_Const,
+	FUNC_NetFuncFlags = FUNC_Net | FUNC_NetReliable | FUNC_NetServer | FUNC_NetClient,
+
+	FUNC_AllFlags = 0xFFFFFFFF,
 };
 
 extern std::string StringFromEnum(EFunctionFlags flag);
+
+enum class ECastToken : byte {
+	CST_InterfaceToObject = 0x36,
+	CST_InterfaceToString = 0x37,
+	CST_InterfaceToBool = 0x38,
+	CST_RotatorToVector = 0x39,
+	CST_ByteToInt = 0x3A,
+	CST_ByteToBool = 0x3B,
+	CST_ByteToFloat = 0x3C,
+	CST_IntToByte = 0x3D,
+	CST_IntToBool = 0x3E,
+	CST_IntToFloat = 0x3F,
+	CST_BoolToByte = 0x40,
+	CST_BoolToInt = 0x41,
+	CST_BoolToFloat = 0x42,
+	CST_FloatToByte = 0x43,
+	CST_FloatToInt = 0x44,
+	CST_FloatToBool = 0x45,
+	CST_ObjectToInterface = 0x46,
+	CST_ObjectToBool = 0x47,
+	CST_NameToBool = 0x48,
+	CST_StringToByte = 0x49,
+	CST_StringToInt = 0x4A,
+	CST_StringToBool = 0x4B,
+	CST_StringToFloat = 0x4C,
+	CST_StringToVector = 0x4D,
+	CST_StringToRotator = 0x4E,
+	CST_VectorToBool = 0x4F,
+	CST_VectorToRotator = 0x50,
+	CST_RotatorToBool = 0x51,
+	CST_ByteToString = 0x52,
+	CST_IntToString = 0x53,
+	CST_BoolToString = 0x54,
+	CST_FloatToString = 0x55,
+	CST_ObjectToString = 0x56,
+	CST_NameToString = 0x57,
+	CST_VectorToString = 0x58,
+	CST_RotatorToString = 0x59,
+	CST_DelegateToString = 0x5A,
+	CST_StringToDelegate = 0x5B,
+	CST_StringToName = 0x60,
+ CST_Max = 0xFF,
+};

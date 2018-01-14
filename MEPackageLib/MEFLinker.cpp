@@ -3,6 +3,7 @@
 #include <iostream>
 #include "MEUFunction.h"
 #include "MEUStruct.h"
+#include "MEScript.h"
 
 
 MEFLinker::MEFLinker(MEPackage *Package)
@@ -44,7 +45,10 @@ void MEFLinker::LoadScript(MEArchive& A, MEUFunction* Function) {
 	UP_OFFSET_GUARD(object, A, Function->ScriptOffset, Function->ScriptOffset + Function->ScriptSize);
 	UP_BYTE_MARKER(object, A, A.Tell(), BI_Object);
 
-	Function->ScriptTokens = Script.ParseUntilEnd(A);
+	MEScriptContext Context;
+	Context.ScriptOffset = Function->ScriptOffset;
+	Context.ScriptSize = Function->ScriptSize;
+	Function->ScriptTokens = Script.ParseUntilEnd(A, Context);
 	Function->isScriptLoaded = true;
 }
 
