@@ -28,5 +28,6 @@ public:
 	std::unique_ptr<METoken> ParseToken(MEArchive& A, MEScriptContext& Context);
 
 	void PrintOffsetInfo(std::string Info, MEArchive& A, MEScriptContext& Context);
+	void VerifyToken(METoken* Token, MEExprToken Value);
 };
 

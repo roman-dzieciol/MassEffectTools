@@ -88,15 +88,26 @@ std::unique_ptr<METoken> MEScript::ParseToken(MEArchive& A, MEScriptContext& Con
 
 std::unique_ptr<METoken> MEScript::ParseToken(byte code, MEArchive& A, MEScriptContext& Context)
 {
-	if (code >= (byte)MEExprToken::EX_FirstNative) {
-		dword funcCode = code;
-		if ((funcCode & 0xF0) == (byte)MEExprToken::EX_ExtendedNative) {
-			byte funcCode2 = 0;
-			A << funcCode2;
-			funcCode = ((funcCode - (dword)funcCode2) << 8) + (dword)funcCode2;
-		}
-		return ParseFunc(funcCode, A, Context);
+	if (code >= (dword)MEExprToken::EX_FirstNative)
+	{
+		return ParseFunc(code, A, Context);
 	}
+	else if (code >= (dword)MEExprToken::EX_ExtendedNative)
+	{
+		byte funcCode2 = 0;
+		A << funcCode2;
+		return ParseFunc(funcCode2, A, Context);
+	}
+
+	//if (code >= (byte)MEExprToken::EX_FirstNative) {
+	//	dword funcCode = code;
+	//	if ((funcCode & 0xF0) == (byte)MEExprToken::EX_ExtendedNative) {
+	//		byte funcCode2 = 0;
+	//		A << funcCode2;
+	//		funcCode = ((funcCode - (dword)funcCode2) << 8) + (dword)funcCode2;
+	//	}
+	//	return ParseFunc(funcCode, A, Context);
+	//}
 	else {
 		return ParseCode(code, A, Context);
 	}
@@ -111,6 +122,12 @@ void MEScript::PrintOffsetInfo(std::string Info, MEArchive& A, MEScriptContext& 
 		, std::string(Context.Depth, ' ').c_str()
 		, Info.c_str()
 	) << std::endl;
+}
+
+void MEScript::VerifyToken(METoken* Token, MEExprToken Value) {
+	if (Token->GetCode() != Value) {
+		throw MEException("Unexpected token %d, expected: %d", (dword)Token->GetCode(), (dword)Value);
+	}
 }
 
 std::vector<std::unique_ptr<METoken>> MEScript::ParseUntilEnd(MEArchive& A, MEScriptContext& Context)

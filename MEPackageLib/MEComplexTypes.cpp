@@ -51,18 +51,19 @@ std::string MEGUID::String() const {
 // ============================================================================
 MEArchive& operator << (MEArchive& A, MEUNICODEZ& D)
 {
-	D.Text.clear();
-	std::vector<char> chars;
-	char c;
-	do { 
-		A << c;
-		if (c != 0) {
-			c = MESanitizeAscii(c);
-		}
-		chars.push_back(c); 
-	} while (c != 0);
-	D.Text = std::string(&chars[0]);
-	return A;
+	throw MENotImplemented();
+	//D.Text.clear();
+	//std::vector<char> chars;
+	//char c;
+	//do { 
+	//	A << c;
+	//	if (c != 0) {
+	//		c = MESanitizeAscii(c);
+	//	}
+	//	chars.push_back(c); 
+	//} while (c != 0);
+	//D.Text = std::string(&chars[0]);
+	//return A;
 }
 
 
