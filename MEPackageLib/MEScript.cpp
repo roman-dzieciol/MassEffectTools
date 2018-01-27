@@ -4,6 +4,7 @@
 #include "MEFLinker.h"
 #include "METokens.h"
 #include "MEUFunction.h"
+#include "MENativeFunctionTable.h"
 #include <iostream>
 
 struct Indenter {
@@ -51,7 +52,8 @@ std::unique_ptr<METoken> MEScript::ParseCode(byte code, MEArchive& A, MEScriptCo
 std::unique_ptr<METoken> MEScript::ParseFunc(MENativeFuncIndex funcCode, MEArchive& A, MEScriptContext& Context)
 {
 	auto indenter = Indenter(Context.Depth);
-	auto func = A.GetLinker()->GetNativeFunc(funcCode);
+	auto ft = A.GetLinker()->FunctionTable;
+	auto func = ft->GetNativeFunc(funcCode);
 	PrintOffsetInfo(MEFormat("0x%X %s"
 		, (dword)funcCode
 		, func->GetObjectName().c_str()
@@ -115,13 +117,13 @@ std::unique_ptr<METoken> MEScript::ParseToken(byte code, MEArchive& A, MEScriptC
 
 void MEScript::PrintOffsetInfo(std::string Info, MEArchive& A, MEScriptContext& Context)
 {
-	std::cout << MEFormat("%s[%0.4x][%0.2x] %s%s"
+	ME::Log("%s[%0.4x][%0.2x] %s%s\n"
 		, A.GetOffsetText().c_str()
 		, A.Tell() - Context.ScriptOffset
 		, Context.Depth
 		, std::string(Context.Depth, ' ').c_str()
 		, Info.c_str()
-	) << std::endl;
+	);
 }
 
 void MEScript::VerifyToken(METoken* Token, MEExprToken Value) {

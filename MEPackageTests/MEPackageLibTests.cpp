@@ -14,7 +14,7 @@ namespace MEPackageTests
 		TEST_METHOD(TestItLoadsCore)
 		{
 			MEPackageLoader loader;
-			loader.Load(fs::path("C:\\_MECoop\\Core.u"));
+			//loader.Load(fs::path("C:\\_MECoop\\Core.u"));
 		}
 
 	};

@@ -1,5 +1,19 @@
 #include "stdafx.h"
 #include "MEUtils.h"
+#include <array>
+
+auto& GMELog = MELog<1024 * 20>::Shared();
+
+void ME::Log(const char *format, ...) {
+	va_list args1;
+	va_start(args1, format);
+	GMELog.Logv(format, args1);
+	va_end(args1);
+}
+
+extern std::string ME::LogStr() {
+	return GMELog.String();
+}
 
 std::string MEFormat(const char *format, ...)
 {
@@ -16,3 +30,4 @@ std::string MEFormat(const char *format, ...)
 
 	return output;
 }
+

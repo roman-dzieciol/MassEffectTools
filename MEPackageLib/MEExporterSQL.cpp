@@ -5,6 +5,8 @@
 #include <memory>
 #include "MEUObject.h"
 #include "MEUFunction.h"
+#include <boost/algorithm/string/replace.hpp>
+
 
 
 MEExporterSQL::~MEExporterSQL()
@@ -12,8 +14,9 @@ MEExporterSQL::~MEExporterSQL()
 }
 
 inline std::string SQLSafe(const std::string& s) {
+	auto result = boost::replace_all_copy(s, "'", "''");
 	if (!s.empty()) {
-		return std::string("'") + s + "'";
+		return std::string("'") + result + "'";
 	}
 	return "''";
 }
@@ -157,32 +160,32 @@ void MEExporterSQL::ExportPackage(MEPackage& Package) {
 		}
 	}
 
-	s << "CREATE TABLE Export_UFunction (";
-	s << "rowid INTEGER PRIMARY KEY";
-	s << "," << "NativeIndex INTEGER";
-	s << "," << "OperatorPrecedence INTEGER";
-	s << "," << "Flags INTEGER";
-	s << "," << "FlagsStr TEXT";
-	s << "," << "Name TEXT";
-	s << ");";
-	s << std::endl;
-	{
-		auto rowid = 0;
-		for (auto& item : Package.ExportObjects) {
-			auto function = dynamic_cast<MEUFunction*>(item.get());
-			if (function) {
-				s << "INSERT INTO Export_UFunction VALUES(";
-				s << rowid++;
-				s << "," << (int)function->NativeIndex;
-				s << "," << (int)function->OperatorPrecedence;
-				s << "," << function->Flags.Value;
-				s << "," << SQLSafe(function->Flags.StringFromFlags());
-				s << "," << SQLSafe(Package.GetNameString(function->Name));
-				s << ");";
-				s << std::endl;
-			}
-		}
-	}
+	//s << "CREATE TABLE Export_UFunction (";
+	//s << "rowid INTEGER PRIMARY KEY";
+	//s << "," << "NativeIndex INTEGER";
+	//s << "," << "OperatorPrecedence INTEGER";
+	//s << "," << "Flags INTEGER";
+	//s << "," << "FlagsStr TEXT";
+	//s << "," << "Name TEXT";
+	//s << ");";
+	//s << std::endl;
+	//{
+	//	auto rowid = 0;
+	//	for (auto& item : Package.ExportObjects) {
+	//		auto function = dynamic_cast<MEUFunction*>(item.get());
+	//		if (function) {
+	//			s << "INSERT INTO Export_UFunction VALUES(";
+	//			s << rowid++;
+	//			s << "," << (int)function->NativeIndex;
+	//			s << "," << (int)function->OperatorPrecedence;
+	//			s << "," << function->Flags.Value;
+	//			s << "," << SQLSafe(function->Flags.StringFromFlags());
+	//			s << "," << SQLSafe(Package.GetNameString(function->Name));
+	//			s << ");";
+	//			s << std::endl;
+	//		}
+	//	}
+	//}
 
 	s << "COMMIT;";
 	s << std::endl;

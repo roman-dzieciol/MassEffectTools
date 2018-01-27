@@ -4,16 +4,16 @@
 
 class MEArchive;
 class MEUFunction;
+class MENativeFunctionTable;
 
 class MEFLinker
 {
 public:
 
 	MEScript Script;
+	MENativeFunctionTable* FunctionTable;
 
-	std::unordered_map<MENativeFuncIndex, MEUFunction*> NativeFunctions;
-
-	MEFLinker(MEPackage *Package);
+	MEFLinker(MEPackage *Package, MENativeFunctionTable* FunctionTable);
 	~MEFLinker();
 
 	MEPackage *GetPackage() { return Package; }
@@ -23,8 +23,6 @@ public:
 	void LoadNativeFunctions(MEArchive& A);
 	void LoadNonNativeFunctions(MEArchive& A);
 
-	MEUFunction* GetNativeFunc(MENativeFuncIndex Index);
-	void AddNativeFunc(MENativeFuncIndex Index, MEUFunction* Func);
 
 private:
 	MEPackage *Package;

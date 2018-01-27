@@ -70,18 +70,18 @@ void MEPackageLoader::DumpPackage(MEFileArchive& A, MEPackage& D, fs::path path)
 	//f << pkg;
 }
 
-void MEPackageLoader::Load(fs::path path) 
+std::unique_ptr<MEPackage> MEPackageLoader::Load(fs::path path, MENativeFunctionTable* FunctionTable)
 {
 	MEFileArchive f;
 	f.ReadPath(path);
-	auto pkg = MEPackage();
-	auto linker = MEFLinker(&pkg);
+	auto pkg = std::make_unique<MEPackage>();
+	auto linker = MEFLinker(pkg.get(), FunctionTable);
 	f.SetLinker(&linker);
-	f << pkg;
+	f << *pkg;
 
-	if (pkg.Header.CompressionFlags != (dword)MECompressionFlags::None && !f.IsDecompressed()) {
+	if (pkg->Header.CompressionFlags != (dword)MECompressionFlags::None && !f.IsDecompressed()) {
 		//f.Decompress(pkg.Header.ChunkInfo.Array(), static_cast<MECompressionFlags>(pkg.Header.CompressionFlags));
-		auto A = UncompressPackage(pkg, f);
+		auto A = UncompressPackage(*pkg, f);
 		A->Seek(0);
 
 
@@ -91,20 +91,22 @@ void MEPackageLoader::Load(fs::path path)
 		inflatedStream.write((const char*)A->GetDataPtr(), A->Length());
 
 		A->Seek(0);
-		auto upkg = MEPackage();
+		auto upkg = std::make_unique<MEPackage>();
 
-		auto ulinker = MEFLinker(&upkg);
+		auto ulinker = MEFLinker(upkg.get(), FunctionTable);
 		A->SetLinker(&ulinker);
 
-		*A << upkg;
+		*A << *upkg;
 
-		LoadObjects(*A, upkg);
-		DumpPackage(*A, upkg, path);
+		//DumpPackage(*A, upkg, path);
+		LoadObjects(*A, *upkg);
+		return upkg;
 	}
 	else {
 
-		LoadObjects(f, pkg);
-		DumpPackage(f, pkg, path);
+		//DumpPackage(f, pkg, path);
+		LoadObjects(f, *pkg);
+		return pkg;
 	}
 	
 }

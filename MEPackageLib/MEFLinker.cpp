@@ -6,8 +6,8 @@
 #include "MEScript.h"
 
 
-MEFLinker::MEFLinker(MEPackage *Package)
-	: Package(Package)
+MEFLinker::MEFLinker(MEPackage *Package, MENativeFunctionTable* FunctionTable)
+	: Package(Package), FunctionTable(FunctionTable)
 {
 }
 
@@ -23,7 +23,9 @@ void MEFLinker::LoadScripts(MEArchive& A) {
 		{
 			auto func = dynamic_cast<MEUFunction*>(exportObject.get());
 			if (func) {
-				std::cout << "Loading script for: " << Package->GetObjectPath(MEObjectIndex::FromExportIndex(exportObject->_TableIndex)) << std::endl;
+				auto const msg = MEFormat("Loading script for: %s", Package->GetObjectPath(MEObjectIndex::FromExportIndex(exportObject->_TableIndex)).c_str());
+				std::cout << msg << std::endl;
+				ME::Log("%s\n", msg.c_str());
 				LoadScript(A, func);
 			}
 		}
@@ -50,22 +52,4 @@ void MEFLinker::LoadScript(MEArchive& A, MEUFunction* Function) {
 	Context.ScriptSize = Function->ScriptSize;
 	Function->ScriptTokens = Script.ParseUntilEnd(A, Context);
 	Function->isScriptLoaded = true;
-}
-
-
-MEUFunction* MEFLinker::GetNativeFunc(MENativeFuncIndex Index) {
-	auto result = NativeFunctions.find(Index);
-	if (result != NativeFunctions.end()) {
-		return result->second;
-	}
-	throw MEException("Unknown native function index: %d", (dword)Index);
-	//return nullptr;
-}
-
-void MEFLinker::AddNativeFunc(MENativeFuncIndex Index, MEUFunction* Func) {
-	auto result = NativeFunctions.find(Index);
-	if (result != NativeFunctions.end()) {
-		throw MEException("Native function already added: %d", Index);
-	}
-	NativeFunctions[Index] = Func;
 }

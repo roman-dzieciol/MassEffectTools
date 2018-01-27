@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "MEPackageLib.h"
+#include "MEEditor.h"
 #include <iostream>
 
 
@@ -19,8 +20,9 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	MEPackageLoader loader;
-	loader.Load(path);
+	MEEditor editor;
+	editor.LoadPackages(path);
+
     return 0;
 }
 

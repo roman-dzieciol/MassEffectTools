@@ -72,16 +72,18 @@ public:
 	virtual MEExprToken GetCode() override { return MEExprToken::EX_Switch; } // 0x05
 	virtual std::string GetDescription() override { static const std::string desc = "Switch."; return desc; }
 
-	MEObjectIndex PropertySize;
 	byte PropertyType;
+	byte PropertyType2;
+	MEObjectIndex PropertySize;
 	std::unique_ptr<METoken> Expression;
 
 	ME_EX_Switch() {}
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {
 	//__debugbreak();
-		A << PropertySize;
 		A << PropertyType;
+		A << PropertyType2;
+		A << PropertySize;
 		Expression = S.ParseToken(A, Context);
 	}
 };
@@ -97,7 +99,7 @@ public:
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {////__debugbreak();
 		A << Offset;
-		S.PrintOffsetInfo(MEFormat(" (Offset 0x%0.8x)", Offset), A, Context);
+		//S.PrintOffsetInfo(MEFormat(" (Offset 0x%0.8x)", Offset), A, Context);
 	}
 };
 
@@ -533,7 +535,7 @@ public:
 	virtual std::string GetDescription() override { static const std::string desc = "A name constant."; return desc; }
 
 	ME_EX_NameConst() {}
-	dword Value;
+	MEFName Value;
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {
 		//__debugbreak();
@@ -884,14 +886,14 @@ public:
 	std::unique_ptr<METoken> Expression;
 	std::unique_ptr<METoken> Index;
 	std::unique_ptr<METoken> Count;
-	std::unique_ptr<METoken> End;
+	//std::unique_ptr<METoken> End;
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {
 	//__debugbreak();
 		Expression = S.ParseToken(A, Context);
 		Index = S.ParseToken(A, Context);
-		End = S.ParseToken(A, Context);
-		S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
+		//End = S.ParseToken(A, Context);
+		//S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
 	}
 };
 
@@ -989,14 +991,15 @@ public:
 	std::unique_ptr<METoken> Expression;
 	std::unique_ptr<METoken> Index;
 	std::unique_ptr<METoken> Count;
-	std::unique_ptr<METoken> End;
+	//std::unique_ptr<METoken> End;
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {
 	//__debugbreak();
 		Expression = S.ParseToken(A, Context);
 		Index = S.ParseToken(A, Context);
-		End = S.ParseToken(A, Context);
-		S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
+		Count = S.ParseToken(A, Context);
+		//End = S.ParseToken(A, Context);
+		//S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
 	}
 };
 
@@ -1028,7 +1031,7 @@ public:
 	ME_EX_DelegateFunction() {}
 	byte LocalProperty;
 	MEObjectIndex DelegateProperty;
-	MEObjectIndex DelegateFunctionName;
+	MEFName DelegateFunctionName;
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {
 	//__debugbreak();
@@ -1108,8 +1111,8 @@ public:
 		ArrayPropertyExpression = S.ParseToken(A, Context);
 		A << Offset;
 		SearchItemExpression = S.ParseToken(A, Context);
-		End = S.ParseToken(A, Context);
-		S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
+		//End = S.ParseToken(A, Context);
+		//S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
 	}
 };
 
@@ -1123,7 +1126,7 @@ public:
 	word Offset;
 	std::unique_ptr<METoken> PropertyNameExpression;
 	std::unique_ptr<METoken> SearchItemExpression;
-	std::unique_ptr<METoken> End;
+	//std::unique_ptr<METoken> End;
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {
 	//__debugbreak();
@@ -1131,8 +1134,8 @@ public:
 		A << Offset;
 		PropertyNameExpression = S.ParseToken(A, Context);
 		SearchItemExpression = S.ParseToken(A, Context);
-		End = S.ParseToken(A, Context);
-		S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
+		//End = S.ParseToken(A, Context);
+		//S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
 	}
 };
 
@@ -1243,14 +1246,14 @@ public:
 	ME_EX_DynArrayAdd() {}
 	std::unique_ptr<METoken> Expression;
 	std::unique_ptr<METoken> CountExpression;
-	std::unique_ptr<METoken> End;
+	//std::unique_ptr<METoken> End;
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {////__debugbreak();
 
 		Expression = S.ParseToken(A, Context);
 		CountExpression = S.ParseToken(A, Context);
-		End = S.ParseToken(A, Context);
-		S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
+		//End = S.ParseToken(A, Context);
+		//S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
 	}
 };
 
@@ -1261,7 +1264,7 @@ public:
 
 	ME_EX_DynArrayAddItem() {}
 	std::unique_ptr<METoken> ArrayPropertyExpression;
-	dword Offset;
+	word Offset;
 	std::unique_ptr<METoken> ItemExpression;
 	std::unique_ptr<METoken> End;
 
@@ -1282,17 +1285,17 @@ public:
 
 	ME_EX_DynArrayRemoveItem() {}
 	std::unique_ptr<METoken> ArrayPropertyExpression;
-	dword Offset;
+	word Offset;
 	std::unique_ptr<METoken> ItemExpression;
 	std::unique_ptr<METoken> End;
 
 	virtual void Parse(MEArchive& A, MEScript& S, MEScriptContext& Context) override {////__debugbreak();
 
 		ArrayPropertyExpression = S.ParseToken(A, Context);
-		A << Offset;
 		ItemExpression = S.ParseToken(A, Context);
-		End = S.ParseToken(A, Context);
-		S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
+		//A << Offset;
+		//End = S.ParseToken(A, Context);
+		//S.VerifyToken(End.get(), MEExprToken::EX_EndFunctionParms);
 	}
 };
 
@@ -1347,7 +1350,7 @@ public:
 
 	ME_EX_DynArraySort() {}
 	std::unique_ptr<METoken> ArrayPropertyExpression;
-	dword Offset;
+	word Offset;
 	std::unique_ptr<METoken> SortExpression;
 	std::unique_ptr<METoken> End;
 

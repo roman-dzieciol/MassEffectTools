@@ -72,17 +72,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\..\minilzo;$(ProjectDir)\..\..\boost_1_66_0\;$(inherited);$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\..\minilzo;$(inherited);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\..\minilzo;$(ProjectDir)\..\..\boost_1_66_0\;$(inherited);$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)\..\minilzo;$(ProjectDir)\..\..\boost_1_66_0\;$(inherited);$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)\..\minilzo;$(inherited);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\..\minilzo;$(ProjectDir)\..\..\boost_1_66_0\;$(inherited);$(IncludePath);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -175,6 +177,7 @@
     <ClInclude Include="MEFName.h" />
     <ClInclude Include="MEFPropertyTag.h" />
     <ClInclude Include="MENameTableIndex.h" />
+    <ClInclude Include="MENativeFunctionTable.h" />
     <ClInclude Include="MEObjectFactory.h" />
     <ClInclude Include="MEObjectIndex.h" />
     <ClInclude Include="MEPackage.h" />
@@ -208,6 +211,7 @@
     <ClCompile Include="MEFName.cpp" />
     <ClCompile Include="MEFPropertyTag.cpp" />
     <ClCompile Include="MENameTableIndex.cpp" />
+    <ClCompile Include="MENativeFunctionTable.cpp" />
     <ClCompile Include="MEObjectFactory.cpp" />
     <ClCompile Include="MEObjectIndex.cpp" />
     <ClCompile Include="MEPackage.cpp" />

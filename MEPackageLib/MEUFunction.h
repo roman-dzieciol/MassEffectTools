@@ -9,6 +9,7 @@ public:
 	word NativeIndex;
 	byte OperatorPrecedence;
 	MEFlags<EFunctionFlags, dword> Flags;
+	word RepOffset;
 	MEFName Name;
 
 	MEUFunction();
