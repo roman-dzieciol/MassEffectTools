@@ -9,8 +9,8 @@ MEEditor::MEEditor() {
 		"Core",
 		"Engine",
 		"GameFramework",
-		"Editor",
-		"UnrealEd",
+		//"Editor",
+		//"UnrealEd",
 		"UnrealScriptTest",
 		"IpDrv",
 	};

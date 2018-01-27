@@ -240,3 +240,80 @@ public:
 		return A;
 	}
 };
+
+
+// ============================================================================
+// uppIndex -- int stored with minimal amount of bytes
+// ============================================================================
+// byte 0:
+//   0x80 = sign
+//   0x40 = next byte marker
+//   0x3F = value
+// bytes 1-4:
+//   0x80 = next byte marker
+//   0x7F = value
+// ============================================================================
+class MEIndex
+{
+protected:
+	int32	Value;
+
+public:
+	MEIndex() {}
+	explicit MEIndex(int32 d) : Value(d) {}
+
+public:
+	int32	GetValue() const { return Value; }
+
+public:
+	friend bool operator == (const MEIndex& left, const MEIndex& right) { return left.Value == right.Value; }
+	friend bool operator == (const MEIndex& left, int right) { return left.Value == right; }
+
+public:
+	friend void operator << (MEArchive& A, MEIndex& D)
+	{
+		int32 Original = D.Value;
+		dword V = labs(D.Value);
+		byte B0 = ((D.Value >= 0) ? 0 : 0x80) + ((V < 0x40) ? V : ((V & 0x3f) + 0x40));
+		D.Value = 0;
+		A << B0;
+		if (B0 & 0x40)
+		{
+			V >>= 6;
+			byte B1 = (V < 0x80) ? V : ((V & 0x7f) + 0x80);
+			A << B1;
+			if (B1 & 0x80)
+			{
+				V >>= 7;
+				byte B2 = (V < 0x80) ? V : ((V & 0x7f) + 0x80);
+				A << B2;
+				if (B2 & 0x80)
+				{
+					V >>= 7;
+					byte B3 = (V < 0x80) ? V : ((V & 0x7f) + 0x80);
+					A << B3;
+					if (B3 & 0x80)
+					{
+						V >>= 7;
+						byte B4 = V;
+						A << B4;
+						D.Value = B4;
+					}
+					D.Value = (D.Value << 7) + (B3 & 0x7f);
+				}
+				D.Value = (D.Value << 7) + (B2 & 0x7f);
+			}
+			D.Value = (D.Value << 7) + (B1 & 0x7f);
+		}
+		D.Value = (D.Value << 6) + (B0 & 0x3f);
+
+		if (B0 & 0x80) {
+			D.Value = -D.Value;
+		}
+
+	/*	if (!A.IsLoading() && D.Value != Original) {
+			throw upexception(wxString::Format(wxT("Mismatch: %08X %08X"), D.Value, Original));
+		}*/
+	
+	}
+};

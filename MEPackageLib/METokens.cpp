@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "METokens.h"
 #include "MEUFunction.h"
+#include "MEFLinker.h"
 
 
 MEExprToken ME_EX_HighNative::GetCode()
@@ -45,4 +46,20 @@ void MENativeFuncToken::Parse(MEArchive& A, MEScript& S, MEScriptContext& Contex
 	//__debugbreak();
 
 	Tokens = S.ParseFuncArgs(A, Context);
+}
+
+void ME_EX_VirtualFunction::Parse(MEArchive& A, MEScript& S, MEScriptContext& Context)
+{
+	//__debugbreak();
+
+	A << FunctionName;
+	S.PrintOffsetInfo(MEFormat(" (FunctionName %s)", A.GetLinker()->GetPackage()->GetNameString(FunctionName).c_str()), A, Context);
+	Args = S.ParseFuncArgs(A, Context);
+}
+
+void ME_EX_InstanceDelegate::Parse(MEArchive& A, MEScript& S, MEScriptContext& Context)
+{
+	//__debugbreak();
+	A << FunctionName;
+	S.PrintOffsetInfo(MEFormat(" (FunctionName %s)", A.GetLinker()->GetPackage()->GetNameString(FunctionName).c_str()), A, Context);
 }
